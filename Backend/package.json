@@ -1,0 +1,29 @@
+{
+  "name": "cmpe273hw1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "demo_db_connection.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha test/**/*.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^4.1.2",
+    "mongoose": "^6.0.10",
+    "multer": "^1.4.3",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.1.2",
+    "prettier": "^2.4.1",
+    "supertest": "^6.1.6"
+  }
+}
