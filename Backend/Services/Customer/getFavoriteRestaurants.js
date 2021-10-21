@@ -14,8 +14,8 @@ const getFavoriteRestaurants = async (req, res) => {
         _id: { $in: restIds },
       }).exec();
       console.log("getFavRest", restaurantDetail);
-      // restaurantDetail = JSON.parse(JSON.stringify(restaurantDetail));
-      res.send(restaurantDetail);
+      let result = JSON.parse(JSON.stringify(restaurantDetail));
+      res.send(result);
     }
   } catch (error) {
     console.log(error);

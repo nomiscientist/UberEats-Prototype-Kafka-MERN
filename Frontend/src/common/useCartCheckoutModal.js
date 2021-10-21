@@ -17,17 +17,17 @@ const useCartCheckoutModal = (modalShow, onHide) => {
   const history = useHistory();
 
   if (!session.restaurantFlag && cartDetails.length > 0) {
-    restaurantName = cartDetails[0].RestaurantName;
+    restaurantName = cartDetails[0].restaurantName;
   }
 
   const displaySelectedItems = () => {
     return cartDetails.map((item, key) => {
       return (
         <Row>
-          <Col md={4}>{item.FoodName}</Col>
+          <Col md={4}>{item.dishName}</Col>
           <Col md={5}></Col>
-          <Col md={3}> {`$${(item.Price * item.Quantity).toFixed(2)}`}</Col>
-          {populateQuantityDropdown(item.Quantity, key)}
+          <Col md={3}> {`$${(item.price * item.quantity).toFixed(2)}`}</Col>
+          {populateQuantityDropdown(item.quantity, key)}
         </Row>
       );
     });
@@ -35,7 +35,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
 
   const onQuantityChangeHandler = async (value, key) => {
     let requestObj = { ...cartDetails[key] };
-    requestObj.Quantity = value;
+    requestObj.quantity = value;
 
     try {
       const response = await fetch(
@@ -64,7 +64,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
 
   const calculateTotal = () => {
     cartDetails.forEach((element) => {
-      totalAmount += element.Amount;
+      totalAmount += element.amount;
     });
     setCartTotal(totalAmount);
   };

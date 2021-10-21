@@ -1,27 +1,40 @@
-const con = require("../../Controller/Common/dbConnection");
+// const con = require("../../Controller/Common/dbConnection");
+const Orders = require("../../Models/OrdersModel");
+const OrderDetails = require("../../Models/OrderDetailsModel");
+const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 
-const showCartDetails = (req, res) => {
-  let sqlSelOrderID = `SELECT OrderID from Orders where CustomerID= (?) and FinalStatus =(?)`;
+const showCartDetails = async (req, res) => {
+  let order = await Orders.findOne({
+    customerId: req.body.customerId,
+    finalStatus: "New",
+  }).exec();
 
-  con.query(sqlSelOrderID, [req.body.customerId, "New"], (err, result) => {
-    if (err) throw err;
-    if (result.length > 0) {
-      let sqlSelect = `SELECT O.*, R.RestaurantName FROM OrderDetails  O , RestaurantDetails  R
-        WHERE  O.RestaurantID = R.RestaurantID AND O.OrderId= (?) AND  O.CustomerID= (?) `;
-      con.query(
-        sqlSelect,
-        [result[0].OrderID, req.body.customerId],
-        (err, result1) => {
-          if (err) throw err;
-          if (result1) {
-            res.status(200).send(result1);
-          }
-        }
-      );
-    } else {
-      res.status(200).send([]);
-    }
-  });
+  // console.log("order", order.restaurantId);
+  if (order) {
+    let orderDetail = await OrderDetails.find({
+      customerId: req.body.customerId,
+      orderId: order._id,
+    }).exec();
+
+    // console.log("orderDetail", orderDetail);
+
+    let restaurant = await RestaurantDetails.find({
+      _id: order.restaurantId,
+    }).exec();
+
+    console.log("restaurant", restaurant);
+    let result = orderDetail.map((element) => {
+      return {
+        ...element._doc,
+        restaurantName: restaurant[0].restaurantName,
+      };
+    });
+    console.log("result", result);
+    result = JSON.parse(JSON.stringify(result));
+    res.status(200).send(result);
+  } else {
+    res.status(200).send([]);
+  }
 };
 
 module.exports = showCartDetails;

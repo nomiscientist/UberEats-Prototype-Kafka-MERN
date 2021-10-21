@@ -20,7 +20,7 @@ const foodItemsDisplay = (req, res, err) => {
           let responseList = restaurantDishes.map((row) => {
             return {
               foodId: row._id,
-              restaurantId: row.restaurantID,
+              restaurantId: row.restaurantId,
               dishName: row.dishName,
               price: row.price,
               description: row.description,

@@ -1,40 +1,54 @@
-const con = require("../../Controller/Common/dbConnection");
+// const con = require("../../Controller/Common/dbConnection");
+const OrderDetails = require("../../Models/OrderDetailsModel");
+const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 
-const updateCartOrderDetails = (req, res) => {
-  if (req.body.Quantity === 0) {
-    let sqlDelete = `DELETE FROM OrderDetails WHERE OrderDetailId = ?`;
-    con.query(sqlDelete, [req.body.OrderDetailId], (err, result) => {
-      if (err) throw err;
-    });
-  } else {
-    let sqlUpdate = `UPDATE OrderDetails SET  Quantity = ? , Amount=?  WHERE  OrderDetailId = ? `;
+const updateCartOrderDetails = async (req, res) => {
+  try {
+    if (req.body.quantity === 0) {
+      await OrderDetails.findOneAndDelete({
+        _id: req.body._id,
+      }).exec();
 
-    con.query(
-      sqlUpdate,
-      [
-        req.body.Quantity,
-        req.body.Quantity * req.body.Price,
-        req.body.OrderDetailId,
-      ],
-      (err, result) => {
-        if (err) throw err;
-      }
-    );
-  }
+      return res.status(200).send([]);
+    } else {
+      console.log("here?");
+      let orderDetail = await OrderDetails.findOne({
+        _id: req.body._id,
+      }).exec();
 
-  let sqlSelect = `SELECT O.* , R.RestaurantName FROM  OrderDetails  O  , RestaurantDetails R WHERE  O.RestaurantID= R.RestaurantID AND O.CustomerID= ?  AND O.OrderId = ?`;
+      console.log("orderDetail?", orderDetail);
 
-  con.query(
-    sqlSelect,
-    [req.body.CustomerID, req.body.OrderId],
-    (err, result) => {
-      if (err) throw err;
-
-      if (result) {
-        res.send(result);
+      if (orderDetail) {
+        OrderDetails.updateOne(orderDetail, {
+          quantity: req.body.quantity,
+          amount: req.body.quantity * req.body.price,
+        }).exec();
       }
     }
-  );
+
+    let restaurant = await RestaurantDetails.findOne({
+      _id: req.body.restaurantId,
+    }).exec();
+
+    console.log("restaurant?", restaurant);
+
+    let orderDetail = await OrderDetails.find({
+      customerId: req.body.customerId,
+      orderId: req.body.orderId,
+    }).exec();
+
+    let result = orderDetail.map((element) => {
+      return {
+        ...element._doc,
+        restaurantName: restaurant.restaurantName,
+      };
+    });
+    console.log("result", result);
+    result = JSON.parse(JSON.stringify(result));
+    res.status(200).send(result);
+  } catch (exception) {
+    res.sendStatus(500);
+  }
 };
 
 module.exports = updateCartOrderDetails;

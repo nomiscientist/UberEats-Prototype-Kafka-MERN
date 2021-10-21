@@ -1,8 +1,9 @@
-const con = require("../../Controller/Common/dbConnection");
+const CustomerDetails = require("../../Models/CustomerDetailsModel");
+const Orders = require("../../Models/OrdersModel");
+const OrderDetails = require("../../Models/OrderDetailsModel");
 
-const addOrdertoCart = (req, res) => {
+const addOrdertoCart = async (req, res) => {
   let mainOrderId;
-  let array3 = [];
 
   if (req.body.quantity === 0) {
     res.send({ Message: "No Dish added as quantity is 0" });
@@ -13,77 +14,58 @@ const addOrdertoCart = (req, res) => {
     res.send({ Message: "No Dish added as quantity is 0" });
     return;
   }
-  let sqlInsert3 =
-    "INSERT INTO OrderDetails (OrderId, FoodId, RestaurantID, CustomerId, FoodName, Price ,Quantity, Amount) VALUES (?,?,?,?,?,?,?,?)";
 
-  let sqlSelect = `SELECT OrderID from Orders where CustomerID = (?) AND FinalStatus= (?)`;
+  try {
+    let order = await Orders.findOne({
+      customerId: req.body.customerId,
+      finalStatus: "New",
+    }).exec();
 
-  con.query(sqlSelect, [req.body.customerId, "New"], (err, result) => {
-    if (err) throw err;
-    if (result.length > 0) {
-      //means already order exists
-      mainOrderId = result[0].OrderID;
+    if (order) {
+      mainOrderId = order._id;
 
-      array3 = [
-        mainOrderId,
-        req.body.foodId,
-        req.body.restaurantId,
-        req.body.customerId,
-        req.body.foodName,
-        req.body.dishPrice,
-        req.body.quantity,
-        req.body.dishPrice * req.body.quantity,
-      ];
-
-      con.query(sqlInsert3, array3, (err, result) => {
-        if (err) throw err;
-
-        if (result) {
-          res.send({ Message: "Added to cart", orderId: mainOrderId });
-        }
+      let orderDetail = await new OrderDetails({
+        orderId: mainOrderId,
+        foodId: req.body.foodId,
+        restaurantId: req.body.restaurantId,
+        customerId: req.body.customerId,
+        dishName: req.body.foodName,
+        price: req.body.dishPrice,
+        quantity: req.body.quantity,
+        amount: req.body.dishPrice * req.body.quantity,
       });
+      orderDetail.save();
+
+      res.send({ Message: "Added to cart", orderId: mainOrderId });
     } else {
-      let sqlInsert =
-        "INSERT INTO Orders ( RestaurantID, CustomerID, FinalStatus, DeliveryOrPickup ) VALUES (?,?,?,?)";
+      let order = await new Orders({
+        restaurantId: req.body.restaurantId,
+        customerId: req.body.customerId,
+        finalStatus: "New",
+        deliveryOrPickup: req.body.deliveryType,
+      });
 
-      con.query(
-        sqlInsert,
-        [
-          req.body.restaurantId,
-          req.body.customerId,
-          "New",
-          req.body.deliveryType,
-        ],
-        (err, result0) => {
-          if (err) throw err;
-          if (result0) {
-            mainOrderId = result0.insertId;
-            array3 = [
-              mainOrderId,
-              req.body.foodId,
-              req.body.restaurantId,
-              req.body.customerId,
-              req.body.foodName,
-              req.body.dishPrice,
-              req.body.quantity,
-              req.body.dishPrice * req.body.quantity,
-            ];
+      order.save();
 
-            con.query(sqlInsert3, array3, (err, result) => {
-              if (err) throw err;
+      mainOrderId = order._id;
 
-              if (result) {
-                res.send({
-                  Message: "Added to cart",
-                  orderId: mainOrderId,
-                });
-              }
-            });
-          }
-        }
-      );
+      let orderDetail = await new OrderDetails({
+        orderId: mainOrderId,
+        foodId: req.body.foodId,
+        restaurantId: req.body.restaurantId,
+        customerId: req.body.customerId,
+        dishName: req.body.foodName,
+        price: req.body.dishPrice,
+        quantity: req.body.quantity,
+        amount: req.body.dishPrice * req.body.quantity,
+      });
+      orderDetail.save();
+
+      res.send({ Message: "Added to cart", orderId: mainOrderId });
     }
-  });
+  } catch (exception) {
+    res.sendStatus(500);
+  }
 };
 
 module.exports = addOrdertoCart;

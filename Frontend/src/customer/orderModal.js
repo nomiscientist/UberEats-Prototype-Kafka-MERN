@@ -65,8 +65,8 @@ const OrderModal = (props) => {
       const data = await response.json();
       if (data.length > 0) {
         setCartRestaurantDetails([
-          data[0].RestaurantID,
-          data[0].RestaurantName,
+          data[0].restaurantId,
+          data[0].restaurantName,
         ]);
       }
     } catch (error) {
@@ -158,6 +158,7 @@ const OrderModal = (props) => {
       (cartDetail && cartDetail.restaurantId === cartRestaurantDetails[0])
     ) {
       try {
+        console.log("cartDetail", cartDetail);
         const response = await fetch(
           `http://${NODE_HOST}:${NODE_PORT}/addOrdertoCart`,
           {
