@@ -18,6 +18,7 @@ var CustomerDetailsSchema = new Schema(
     dateOfBirth: { type: Date, required: false },
     about: { type: String, required: false, default: "" },
     image: { type: String, required: false },
+    favoriteRestaurant: { type: Array, required: false },
   },
   {
     versionKey: false,

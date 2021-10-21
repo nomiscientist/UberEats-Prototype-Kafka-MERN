@@ -1,16 +1,25 @@
-const con = require("../../Controller/Common/dbConnection");
+const CustomerDetails = require("../../Models/CustomerDetailsModel");
+const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 
-const getFavoriteRestaurants = (req, res) => {
-  let SelectSql = `select RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture
-  FROM RestaurantDetails where RestaurantID in (SELECT  RestaurantID from CustomerFavorites where CustomerID  = (?))`;
+const getFavoriteRestaurants = async (req, res) => {
+  try {
+    let customerDetail = await CustomerDetails.findOne({
+      _id: req.body.customerId,
+    }).exec();
 
-  con.query(SelectSql, [req.body.customerId], (err, result) => {
-    if (err) throw err;
-    if (result) {
-      result = JSON.parse(JSON.stringify(result));
-      res.send(result);
+    if (customerDetail) {
+      let restIds = customerDetail.favoriteRestaurant;
+
+      const restaurantDetail = await RestaurantDetails.find({
+        _id: { $in: restIds },
+      }).exec();
+      console.log("getFavRest", restaurantDetail);
+      // restaurantDetail = JSON.parse(JSON.stringify(restaurantDetail));
+      res.send(restaurantDetail);
     }
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = getFavoriteRestaurants;

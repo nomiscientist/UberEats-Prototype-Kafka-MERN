@@ -1,18 +1,23 @@
 const con = require("../../Controller/Common/dbConnection");
+const CustomerDetails = require("../../Models/CustomerDetailsModel");
 
 const getDeliveryAddress = (req, res) => {
-  let sqlSelect = `SELECT  AddressLine1, AddressLine2, City  FROM CustomerDetails where CustomerID = (?) `;
+  CustomerDetails.findOne(
+    { _id: req.query.customerId },
+    (error, customerDetail) => {
+      if (error) {
+        throw error;
+      }
 
-  con.query(sqlSelect, [req.query.customerId], (err, result) => {
-    if (err) throw err;
-    if (result) {
-      res.status(200).send({
-        addressLine1: result[0].AddressLine1,
-        addressLine2: result[0].AddressLine2,
-        city: result[0].City,
-      });
+      if (customerDetail) {
+        res.status(200).send({
+          addressLine1: customerDetail.addressLine1,
+          addressLine2: customerDetail.addressLine2,
+          city: customerDetail.City,
+        });
+      }
     }
-  });
+  );
 };
 
 module.exports = getDeliveryAddress;

@@ -1,97 +1,146 @@
-const con = require("../../Controller/Common/dbConnection");
 const sortListOfRestaurants = require("./sortListOfRestaurants");
+const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
+const RestaurantDishes = require("../../Models/RestaurantDishesModel");
+const CustomerDetails = require("../../Models/CustomerDetailsModel");
 
-const getListOfRestaurants = (req, res) => {
-  let customerId = req.body.customerId;
-  let selectSql;
-  let columnsArray = [];
+const getListOfRestaurants = async (req, res) => {
+  // console.log("=====================");
 
-  let custSql = `SELECT City from CustomerDetails where CustomerID=?`;
-  let receivedFlag = "No";
-  let Flag;
+  try {
+    let customerDetail = await CustomerDetails.findOne({
+      _id: req.body.customerId,
+    }).exec();
 
-  if (req.body.deliveryType === "delivery") {
-    receivedFlag = "Yes";
-    Flag = "DeliveryFlag";
-  } else {
-    receivedFlag = "Yes";
-    Flag = "PickupFlag";
-  }
+    let customerLocation = customerDetail?.city;
+    let resultFavRest = customerDetail.favoriteRestaurant;
+    console.log("resultFavRest", resultFavRest);
 
-  if (req.body.filter.length === 0 && req.body.typeaheadValue.length === 0) {
-    selectSql = `SELECT RestaurantID, RestaurantName, Address, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime
-    from RestaurantDetails where ${Flag} = (?)`;
-    columnsArray = [receivedFlag];
-  } else if (
-    req.body.filter.length > 0 &&
-    req.body.typeaheadValue.length === 0
-  ) {
-    selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime from 
-    RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)) AND ${Flag} = (?) `;
-    columnsArray = [req.body.filter, receivedFlag];
-  } else if (req.body.filter.length > 0 && req.body.typeaheadValue.length > 0) {
-    selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  
-    from RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)  and RestaurantID in  (?) ) AND ${Flag} = (?)`;
-    columnsArray.push(req.body.filter);
-    columnsArray.push(req.body.typeaheadValue);
-    columnsArray.push(receivedFlag);
-  } else if (
-    req.body.filter.length === 0 &&
-    req.body.typeaheadValue.length > 0
-  ) {
-    selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  from 
-    RestaurantDetails where RestaurantID in (?) AND ${Flag} = (?)`;
-    columnsArray.push(req.body.typeaheadValue);
-    columnsArray.push(receivedFlag);
-  }
+    let restaurantDetail = [];
 
-  let customerLocation;
-  console.log("column array", columnsArray);
-  con.query(custSql, [customerId], (err, result) => {
-    if (err) throw err;
-    if (result) {
-      result = JSON.parse(JSON.stringify(result));
-      customerLocation = result[0].City;
+    if (req.body.filter.length === 0 && req.body.typeaheadValue.length === 0) {
+      if (req.body.deliveryType === "pickup") {
+        restaurantDetail = await RestaurantDetails.find({
+          pickupFlag: "Yes",
+        }).exec();
+      } else {
+        restaurantDetail = await RestaurantDetails.find({
+          deliveryFlag: "Yes",
+        }).exec();
+      }
+      // console.log("1st wala", restaurantDetail);
+    } //end of 1st case
+    else if (
+      req.body.filter.length > 0 &&
+      req.body.typeaheadValue.length === 0
+    ) {
+      const restaurantDish = await RestaurantDishes.find({
+        dishType: { $in: req.body.filter },
+      }).exec();
+
+      // console.log("restaurantDish", restaurantDish);
+      let restaurantIdList = [];
+
+      restaurantDish.forEach((v) => {
+        restaurantIdList.push({
+          restaurantId: v.restaurantId,
+        });
+      });
+
+      //console.log("restaurantIdList", restaurantIdList);
+
+      if (restaurantIdList.length > 0) {
+        if (req.body.deliveryType === "pickup") {
+          restaurantDetail = await RestaurantDetails.find({
+            pickupFlag: "Yes",
+            restaurantId: { $in: restaurantIdList },
+          }).exec();
+        } else {
+          restaurantDetail = await RestaurantDetails.find({
+            deliveryFlag: "Yes",
+            restaurantId: { $in: restaurantIdList },
+          }).exec();
+        }
+      }
+      // console.log("2nd wala", restaurantDetail);
+    } //end of 2nd case
+    else if (req.body.filter.length > 0 && req.body.typeaheadValue.length > 0) {
+      const restaurantDish = await RestaurantDishes.find({
+        dishType: { $in: req.body.filter },
+        restaurantId: { $in: req.body.typeaheadValue },
+      }).exec();
+
+      let restaurantIdList = [];
+
+      restaurantDish.forEach((v) => {
+        restaurantIdList.push({
+          restaurantId: v.restaurantId,
+        });
+      });
+
+      if (req.body.deliveryType === "pickup") {
+        restaurantDetail = await RestaurantDetails.find({
+          pickupFlag: "Yes",
+          restaurantId: { $in: restaurantIdList },
+        }).exec();
+      } else {
+        restaurantDetail = await RestaurantDetails.find({
+          deliveryFlag: "Yes",
+          restaurantId: { $in: restaurantIdList },
+        }).exec();
+      }
+
+      // console.log("3rd wala", restaurantDetail);
+    } else if (
+      req.body.filter.length === 0 &&
+      req.body.typeaheadValue.length > 0
+    ) {
+      if (req.body.deliveryType === "pickup") {
+        restaurantDetail = await RestaurantDetails.find({
+          pickupFlag: "Yes",
+          restaurantId: { $in: req.body.typeaheadValue },
+        }).exec();
+      } else {
+        restaurantDetail = await RestaurantDetails.find({
+          deliveryFlag: "Yes",
+          restaurantId: { $in: req.body.typeaheadValue },
+        }).exec();
+      }
+
+      //console.log("4th wala", restaurantDetail);
     }
+    //end of 4th case
 
     let orderOfRestaurants;
-    con.query(selectSql, columnsArray, (err, resultLast) => {
-      if (err) throw err;
 
-      if (resultLast) {
-        con.query(
-          "SELECT RestaurantID FROM CustomerFavorites where CustomerID = (?)",
-          [customerId],
-          (err, resultFavRest) => {
-            if (err) throw err;
+    if (restaurantDetail) {
+      // if (resultFavRest) {
+      console.log("final h kya", restaurantDetail);
 
-            let restaurantFavIds = resultFavRest.map((restau) => {
-              return restau.RestaurantID;
-            });
+      let newList = restaurantDetail.map((restaurant) => {
+        let isLiked = false;
+        if (resultFavRest.includes(restaurant._id)) {
+          isLiked = true;
+        }
+        return {
+          ...restaurant._doc,
+          isLiked: isLiked,
+        };
+      });
+      console.log("newList", newList);
 
-            if (resultFavRest) {
-              orderOfRestaurants = sortListOfRestaurants(
-                resultLast.map((restuarant) => {
-                  let isLiked = false;
+      orderOfRestaurants = sortListOfRestaurants(newList, customerLocation);
+      // } else {
+      //   orderOfRestaurants = sortListOfRestaurants(
+      //     restaurantDetail,
+      //     customerLocation
+      //   );
+      // }
 
-                  if (restaurantFavIds.includes(restuarant.RestaurantID)) {
-                    isLiked = true;
-                  }
-                  return {
-                    ...restuarant,
-                    isLiked: isLiked,
-                  };
-                }),
-                customerLocation
-              );
-
-              res.send(orderOfRestaurants);
-            }
-          }
-        );
-      }
-    });
-  });
+      console.log("orderOfRestaurants", orderOfRestaurants);
+      res.send(orderOfRestaurants);
+    }
+  } catch (exception) {
+    res.sendStatus(500);
+  }
 };
-
 module.exports = getListOfRestaurants;

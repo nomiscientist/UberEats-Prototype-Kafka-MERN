@@ -65,36 +65,32 @@ const RestaurantList = (props) => {
             <Card>
               <div
                 style={{ cursor: "pointer" }}
-                onClick={() => onClickHandler(restaurant.RestaurantID)}
+                onClick={() => onClickHandler(restaurant._id)}
               >
                 {viewImageHandler(restaurant)}
                 <div>
                   <font size="4" color="grey">
                     <Card.Text style={{ margin: "0" }}>
-                      {restaurant.RestaurantName}
+                      {restaurant.restaurantName}
                     </Card.Text>
                   </font>
                   <Card.Text style={{ fontSize: 12 }}>
-                    {restaurant.Address}
+                    {restaurant.address}
                   </Card.Text>
                 </div>
               </div>
               <font size="1">
                 <Card.Footer>
-                  {restaurant.City}, {restaurant.State} {"                  "}
+                  {restaurant.city}, {restaurant.state} {"                  "}
                   {restaurant.isLiked ? (
                     <FcLike
                       type="button"
-                      onClick={(e) =>
-                        createFavouritesList(restaurant.RestaurantID)
-                      }
+                      onClick={(e) => createFavouritesList(restaurant._id)}
                     />
                   ) : (
                     <FcLikePlaceholder
                       type="button"
-                      onClick={(e) =>
-                        createFavouritesList(restaurant.RestaurantID)
-                      }
+                      onClick={(e) => createFavouritesList(restaurant._id)}
                     />
                   )}
                 </Card.Footer>

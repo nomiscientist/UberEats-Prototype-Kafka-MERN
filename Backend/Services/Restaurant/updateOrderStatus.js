@@ -1,4 +1,4 @@
-const con = require("../../Controller/Common/dbConnection");
+const con = require('../../Controller/Common/dbConnection');
 
 const updateOrderStatus = (req, res) => {
   let updateSql = `UPDATE Orders SET FinalStatus = "${req.body.orderStatus}" WHERE  OrderId = ?`;
@@ -7,7 +7,7 @@ const updateOrderStatus = (req, res) => {
     if (err) throw err;
 
     if (result) {
-      let sql = "SELECT * FROM Orders where OrderId =(?)";
+      let sql = 'SELECT * FROM Orders where OrderId =(?)';
       con.query(sql, [req.body.orderId], (err, result1) => {
         if (err) throw err;
 

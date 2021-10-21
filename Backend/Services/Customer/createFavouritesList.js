@@ -1,44 +1,62 @@
-const con = require("../../Controller/Common/dbConnection");
+//const con = require("../../Controller/Common/dbConnection");
+const CustomerDetails = require("../../Models/CustomerDetailsModel");
 
-const createFavouritesList = (req, res) => {
-  let sql = `Select * from CustomerFavorites where RestaurantID =(?) AND  CustomerID =(?)`;
+const createFavouritesList = async (req, res) => {
+  try {
+    let customerDetail = await CustomerDetails.findOne({
+      _id: req.body.customerId,
+    }).exec();
 
-  con.query(
-    sql,
-    [req.body.restaurantId, req.body.customerId],
-    (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        let delSql =
-          "DELETE FROM CustomerFavorites WHERE RestaurantID =(?) AND  CustomerID =(?)";
+    if (customerDetail) {
+      console.log("CustomerDetail", customerDetail);
 
-        con.query(
-          delSql,
-          [req.body.restaurantId, req.body.customerId],
-          (err, result1) => {
-            if (err) throw err;
-            if (result1)
-              res.send({
-                restaurantID: req.body.restaurantId,
-              });
-          }
-        );
+      let result = customerDetail.favoriteRestaurant.find(
+        (id) => id === req.body.restaurantId
+      );
+      console.log("result", result);
+
+      if (result) {
+        console.log("Am I here");
+        let newArray = await customerDetail.favoriteRestaurant.filter(function (
+          element
+        ) {
+          return element !== req.body.restaurantId;
+        });
+
+        CustomerDetails.updateOne(customerDetail, {
+          favoriteRestaurant: newArray,
+        }).exec();
       } else {
-        let sqlInsert = `INSERT INTO CustomerFavorites ( RestaurantID, CustomerID) VALUES (?,?)`;
-        con.query(
-          sqlInsert,
-          [req.body.restaurantId, req.body.customerId],
-          (err, result2) => {
-            if (err) throw err;
-            if (result2)
-              res.send({
-                restaurantID: req.body.restaurantId,
-              });
+        console.log(
+          "I should be here",
+          req.body.restaurantId,
+          customerDetail.favoriteRestaurant
+        );
+        let newArray = customerDetail.favoriteRestaurant;
+        newArray.push(req.body.restaurantId);
+
+        console.log("newArray", newArray);
+
+        CustomerDetails.findOne(
+          { _id: req.body.customerId },
+          (error, customerDetail) => {
+            if (error) {
+              throw error;
+            }
+
+            if (customerDetail) {
+              CustomerDetails.updateOne(customerDetail, {
+                favoriteRestaurant: newArray,
+              }).exec();
+            }
           }
         );
       }
+      res.send({ Message: "Favorite List Updated" });
     }
-  );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = createFavouritesList;

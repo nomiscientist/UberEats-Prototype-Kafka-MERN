@@ -1,7 +1,7 @@
 const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 const RestaurantDishes = require("../../Models/RestaurantDishesModel");
 
-const getTypeaheadList = (req, res) => {
+const getTypeaheadList = async (req, res) => {
   let listOfTypeahead = [];
 
   let flag;
@@ -11,121 +11,78 @@ const getTypeaheadList = (req, res) => {
   } else {
     flag = "pickupFlag";
   }
-  //, city: /.*req.body.input*./
+
   const inputValue = req.body.input;
-  console.log("inputValue", inputValue);
+
   try {
-    RestaurantDetails.find(
-      { [flag]: "Yes", city: /.*[inputValue]*./ },
-      (error, restaurantDetail) => {
-        if (error) {
-          throw error;
-        }
-        console.log("restaurantDetail", restaurantDetail);
-        if (restaurantDetail) {
-          let tempObject = {};
+    const restaurantDetail1 = await RestaurantDetails.find({
+      [flag]: "Yes",
+      city: { $regex: new RegExp(inputValue, "i") },
+    }).exec();
 
-          restaurantDetail.forEach((v) => {
-            tempObject[v.city]
-              ? tempObject[v.city].push(v._Id)
-              : (tempObject[v.city] = [v._Id]);
-          });
+    if (restaurantDetail1) {
+      let tempObject = {};
 
-          Object.keys(tempObject).forEach((keyValue) => {
-            listOfTypeahead.push({
-              name: keyValue,
-              id: tempObject[keyValue],
-              isRestaurant: false,
-            });
-          });
-        }
-      }
-    );
-    //first part end
+      restaurantDetail1.forEach((v) => {
+        tempObject[v.city]
+          ? tempObject[v.city].push(v._id)
+          : (tempObject[v.city] = [v._id]);
+      });
 
-    RestaurantDetails.find(
-      { $flag: "Yes", restaurantName: /.*req.body.input*./ },
-      (error, restaurantDetail) => {
-        if (error) {
-          throw error;
-        }
+      Object.keys(tempObject).forEach((keyValue) => {
+        listOfTypeahead.push({
+          name: keyValue,
+          id: tempObject[keyValue],
+          isRestaurant: false,
+        });
+      });
+    }
 
-        if (restaurantDetail) {
-          restaurantDetail.forEach((v) => {
-            listOfTypeahead.push({
-              name: v.restaurantName,
-              id: [v._Id],
-              isRestaurant: true,
-            });
-          });
-        }
-      }
-    ); //end of second part
+    const restaurantDetail = await RestaurantDetails.find({
+      $flag: "Yes",
+      restaurantName: { $regex: new RegExp(inputValue, "i") },
+    }).exec();
 
-    // const aggregate = RestaurantDishes.aggregate([
-    //   {
-    //     $match: { foodName: /.*req.body.input*./ },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "restaurantdetails",
-    //       localField: "restaurantId",
-    //       foreignField: "_id",
-    //       as: "restaurantFoodList",
-    //     },
-    //   },
-    //   {
-    //     $unwind: "$restaurantFoodList",
-    //   },
-    //   {$match : {"restaurantdetails.via":"facebook"}},
-    //   {
-    //     $project : {
+    if (restaurantDetail) {
+      restaurantDetail.forEach((v) => {
+        listOfTypeahead.push({
+          name: v.restaurantName,
+          id: [v._id],
+          isRestaurant: true,
+        });
+      });
+    }
+    // }
 
-    //         "restaurantFoodList._id": 0,
-    //         "restaurantFoodList.": 0,
-    //         "restaurantFoodList.mob": 0
-    //     }
-    //   }
-    // ]);
+    const restaurantDish = await RestaurantDishes.aggregate([
+      {
+        $match: { dishName: { $regex: new RegExp(inputValue, "i") } },
+      },
+    ]).exec();
 
-    console.log("array", listOfTypeahead);
+    if (restaurantDish) {
+      let tempObject = {};
 
-    res.send(listOfTypeahead);
+      restaurantDish.forEach((v) => {
+        tempObject[v.dishName]
+          ? tempObject[v.dishName].push(v._id)
+          : (tempObject[v.dishName] = [v._id]);
+      });
+
+      Object.keys(tempObject).forEach((keyValue) => {
+        listOfTypeahead.push({
+          name: keyValue,
+          id: tempObject[keyValue],
+          isRestaurant: false,
+        });
+      });
+    }
+
+    console.log("listOfTypeahead", listOfTypeahead);
+    res.status(200).send(listOfTypeahead);
   } catch (exception) {
     res.sendStatus(500);
   }
 };
-
-//   let selectSql2 = `SELECT F.FoodName , R.RestaurantID , R.City from  FoodItems F, RestaurantDetails  R where F.RestaurantID = R.RestaurantID and  (FoodName
-//    like '%${req.body.input}%'  or CuisineType like '%${req.body.input}%'   ) AND   R.${flag} = ?`;
-
-//   con.query(selectSql2, ["Yes"], (err, result2) => {
-//     if (err) throw err;
-
-//     if (result2) {
-//       let tempObject = {};
-
-//       result2.forEach((value) => {
-//         if (tempObject[value.FoodName]) {
-//           tempObject[value.FoodName].push(value.RestaurantID);
-//         } else {
-//           let restIDsList = [];
-//           restIDsList.push(value.RestaurantID);
-//           tempObject[value.FoodName] = restIDsList;
-//         }
-//       });
-
-//       Object.keys(tempObject).forEach((keyVal) => {
-//         listOfTypeahead.push({
-//           name: keyVal,
-//           id: tempObject[keyVal],
-//           isRestaurant: false,
-//         });
-//       });
-
-//       res.send(listOfTypeahead);
-//     }
-//   });
-// };
 
 module.exports = getTypeaheadList;

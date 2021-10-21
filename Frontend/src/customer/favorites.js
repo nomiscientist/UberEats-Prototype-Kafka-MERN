@@ -1,25 +1,21 @@
-import {Container } from "react-bootstrap";
-import React, {useEffect } from "react";
+import { Container } from "react-bootstrap";
+import React, { useEffect } from "react";
 import RestaurantList from "../customer/restaurantList.js";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
-import {getFavoriteRestaurants} from "./favoritesRequests";
+import { getFavoriteRestaurants } from "./favoritesRequests";
 
 const Favorites = (props) => {
-
   const populateFavoriteRestaurants = async () => {
-
-    const favoritesData =  await getFavoriteRestaurants ();
-      props.setRestaurantList(
-        favoritesData.map((d) => {
-          return {
-            ...d,
-            isLiked: true,
-            imagePreview:
-              `http://${NODE_HOST}:${NODE_PORT}/` + d.ProfilePicture,
-          };
-        })
-      );
-  
+    const favoritesData = await getFavoriteRestaurants();
+    props.setRestaurantList(
+      favoritesData.map((d) => {
+        return {
+          ...d,
+          isLiked: true,
+          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
+        };
+      })
+    );
   };
 
   useEffect(() => {

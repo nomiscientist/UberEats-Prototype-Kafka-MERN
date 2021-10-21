@@ -46,8 +46,7 @@ const RestaurantSearch = (props) => {
         data.map((d) => {
           return {
             ...d,
-            imagePreview:
-              `http://${NODE_HOST}:${NODE_PORT}/` + d.ProfilePicture,
+            imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
           };
         })
       );

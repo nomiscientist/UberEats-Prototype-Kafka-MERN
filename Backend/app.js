@@ -24,6 +24,10 @@ const foodItemsDisplay = require("./Services/Restaurant/foodItemsDisplay");
 const editFoodDishes = require("./Services/Restaurant/editFoodDishes");
 const showCustomerProfile = require("./Services/Restaurant/showCustomerProfile");
 const getTypeaheadList = require("./Services/Restaurant/getTypeaheadList");
+const getDeliveryAddress = require("./Services/Customer/getDeliveryAddress");
+const getListOfRestaurants = require("./Services/Restaurant/getListOfRestaurants");
+const createFavouritesList = require("./Services/Customer/createFavouritesList");
+const getFavoriteRestaurants = require("./Services/Customer/getFavoriteRestaurants");
 
 const app = express();
 app.use(express.json());
@@ -90,6 +94,12 @@ app.post("/editFoodItems", upload.single("file"), editFoodDishes);
 app.post("/showCustomerProfile", showCustomerProfile);
 
 app.post("/getTypeaheadList", getTypeaheadList);
+
+app.get("/getDeliveryAddress", getDeliveryAddress);
+
+app.post("/getListOfRestaurants", getListOfRestaurants);
+app.post("/createFavouritesList", createFavouritesList);
+app.post("/getFavoriteRestaurants", getFavoriteRestaurants);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
