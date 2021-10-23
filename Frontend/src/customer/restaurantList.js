@@ -37,6 +37,7 @@ const RestaurantList = (props) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: session.token,
           },
           body: JSON.stringify({
             customerId: session.primaryID,

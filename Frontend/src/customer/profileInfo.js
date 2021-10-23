@@ -102,6 +102,9 @@ const ProfileInfo = (props) => {
         {
           method: "POST",
           body: formData,
+          headers: {
+            Authorization: session.token,
+          },
         }
       );
 
@@ -119,6 +122,7 @@ const ProfileInfo = (props) => {
         headers: {
           "Content-Type": "application/json, charset= UTF-8",
           Accept: "application/json, text/html, image/png",
+          Authorization: session.token,
         },
       }
     );

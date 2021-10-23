@@ -56,6 +56,7 @@ const OrderModal = (props) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: session.token,
           },
           body: JSON.stringify({
             customerId: session.primaryID,
@@ -102,6 +103,7 @@ const OrderModal = (props) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: session.token,
           },
           body: JSON.stringify({
             ...cartDetail,
@@ -165,6 +167,7 @@ const OrderModal = (props) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: session.token,
             },
             body: JSON.stringify({
               ...cartDetail,

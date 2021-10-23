@@ -73,6 +73,9 @@ const EditDishModal = (props) => {
         {
           method: "POST",
           body: formData,
+          headers: {
+            Authorization: session.token,
+          },
         }
       );
 

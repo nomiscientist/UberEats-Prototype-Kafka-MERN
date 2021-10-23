@@ -3,6 +3,7 @@ const cors = require("cors");
 const multer = require("multer");
 // const Router = require("./routes");
 const path = require("path");
+var bodyParser = require("body-parser");
 // const con = require("./Controller/Common/dbConnection");
 // const CustomerDetailsModel = require("./Models/CustomerDetailsModel");
 
@@ -40,10 +41,21 @@ const getRestaurantOrders = require("./Services/Restaurant/getRestaurantOrders")
 const showRestaurantOrderDetails = require("./Services/Restaurant/showRestaurantOrderDetails");
 const getPastOrders = require("./Services/Customer/getPastOrders");
 const getReceiptDetails = require("./Services/Customer/getReceiptDetails");
+const createNewOrder = require("./Services/Customer/createNewOrder");
+const passport = require("passport");
+const { checkAuth } = require("./Controller/Common/passport");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(passport.initialize());
+
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(bodyParser.json());
 
 var options = {
   useNewUrlParser: true,
@@ -83,58 +95,76 @@ app.post("/restaurantLoginInfo", restaurantLoginInfo);
 
 app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
 
-app.get("/getProfileInfo", upload.single("file"), getProfileInfo);
+app.get("/getProfileInfo", checkAuth, upload.single("file"), getProfileInfo);
 
-app.post("/getCustomerLocation", getCustomerLocation);
+app.post("/getCustomerLocation", checkAuth, getCustomerLocation);
 
-app.post("/updateProfileInfo", upload.single("file"), updateProfileInfo);
+app.post(
+  "/updateProfileInfo",
+  checkAuth,
+  upload.single("file"),
+  updateProfileInfo
+);
 
-app.get("/restaurantDetailsInfo", upload.single("file"), restaurantDetailsInfo);
+app.get(
+  "/restaurantDetailsInfo",
+  checkAuth,
+  upload.single("file"),
+  restaurantDetailsInfo
+);
 
 app.post(
   "/restaurantDetailsInfoUpdate",
+  checkAuth,
   upload.single("file"),
   restaurantDetailsInfoUpdate
 );
 
-app.post("/addFoodItems", upload.single("file"), addFoodDishes);
+app.post("/addFoodItems", checkAuth, upload.single("file"), addFoodDishes);
 
-app.get("/foodItemsDisplay", upload.single("file"), foodItemsDisplay);
+app.get(
+  "/foodItemsDisplay",
+  checkAuth,
+  upload.single("file"),
+  foodItemsDisplay
+);
 
-app.post("/editFoodItems", upload.single("file"), editFoodDishes);
+app.post("/editFoodItems", checkAuth, upload.single("file"), editFoodDishes);
 
-app.post("/showCustomerProfile", showCustomerProfile);
+app.post("/showCustomerProfile", checkAuth, showCustomerProfile);
 
-app.post("/getTypeaheadList", getTypeaheadList);
+app.post("/getTypeaheadList", checkAuth, getTypeaheadList);
 
-app.get("/getDeliveryAddress", getDeliveryAddress);
+app.get("/getDeliveryAddress", checkAuth, getDeliveryAddress);
 
-app.post("/getListOfRestaurants", getListOfRestaurants);
-app.post("/createFavouritesList", createFavouritesList);
-app.post("/getFavoriteRestaurants", getFavoriteRestaurants);
+app.post("/getListOfRestaurants", checkAuth, getListOfRestaurants);
+app.post("/createFavouritesList", checkAuth, createFavouritesList);
+app.post("/getFavoriteRestaurants", checkAuth, getFavoriteRestaurants);
 
-app.post("/addOrdertoCart", addOrdertoCart);
+app.post("/addOrdertoCart", checkAuth, addOrdertoCart);
 
-app.post("/showCartDetails", showCartDetails);
-app.post("/updateCartOrderDetails", updateCartOrderDetails);
+app.post("/showCartDetails", checkAuth, showCartDetails);
+app.post("/updateCartOrderDetails", checkAuth, updateCartOrderDetails);
 
-app.get("/getOrderTotal", getOrderTotal);
+app.get("/getOrderTotal", checkAuth, getOrderTotal);
 
-app.get("/getDeliveryType", getDeliveryType);
+app.get("/getDeliveryType", checkAuth, getDeliveryType);
 
-app.post("/addDeliveryAddress", addDeliveryAddress);
+app.post("/addDeliveryAddress", checkAuth, addDeliveryAddress);
 
-app.post("/bookOrder", bookOrder);
+app.post("/bookOrder", checkAuth, bookOrder);
 
-app.post("/updateOrderStatus", updateOrderStatus);
+app.post("/updateOrderStatus", checkAuth, updateOrderStatus);
 
-app.post("/getRestaurantOrders", getRestaurantOrders);
+app.post("/getRestaurantOrders", checkAuth, getRestaurantOrders);
 
-app.post("/showRestaurantOrderDetails", showRestaurantOrderDetails);
+app.post("/showRestaurantOrderDetails", checkAuth, showRestaurantOrderDetails);
 
-app.post("/getPastOrders", getPastOrders);
+app.post("/getPastOrders", checkAuth, getPastOrders);
 
-app.post("/getReceiptDetails", getReceiptDetails);
+app.post("/getReceiptDetails", checkAuth, getReceiptDetails);
+
+app.post("/createNewOrder", checkAuth, createNewOrder);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

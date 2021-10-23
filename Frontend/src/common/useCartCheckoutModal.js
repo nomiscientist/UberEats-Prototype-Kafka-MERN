@@ -44,6 +44,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: session.token,
           },
           body: JSON.stringify(requestObj),
         }
@@ -115,6 +116,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: session.token,
           },
           body: JSON.stringify({
             customerId: session.primaryID,

@@ -29,8 +29,16 @@ const CustomerModal = (props) => {
           <Col>
             <h6>Address</h6>
           </Col>
-          <Col>{props.customerDetails.addressLine1 + ", "}</Col>
-          <Col>{props.customerDetails.addressLine2 + ", "}</Col>
+          <Col>
+            {props.customerDetails.addressLine1
+              ? props.customerDetails.addressLine1 + ", "
+              : " -- "}
+          </Col>
+          <Col>
+            {props.customerDetails.addressLine2
+              ? props.customerDetails.addressLine2 + ", "
+              : " -- "}
+          </Col>
           <Col>{props.customerDetails.city + ", "}</Col>
           <Col>{props.customerDetails.zipCode}</Col>
         </Row>

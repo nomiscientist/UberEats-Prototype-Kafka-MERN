@@ -88,6 +88,7 @@ const RestaurantOrders = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: session.token,
         },
         body: JSON.stringify({
           restaurantId: session.primaryID,
@@ -126,6 +127,7 @@ const RestaurantOrders = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: session.token,
           },
           body: JSON.stringify({
             orderId: orderId,
@@ -155,6 +157,7 @@ const RestaurantOrders = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: session.token,
         },
         body: JSON.stringify({
           orderId: orderId,
@@ -173,6 +176,7 @@ const RestaurantOrders = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: session.token,
         },
         body: JSON.stringify({
           customerId: customerId,

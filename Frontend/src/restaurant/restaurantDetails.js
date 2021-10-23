@@ -46,6 +46,7 @@ const RestaurantDetails = (props) => {
         headers: {
           "Content-Type": "application/json, charset= UTF-8",
           Accept: "application/json, text/html, image/png",
+          Authorization: session.token,
         },
       }
     );
@@ -90,6 +91,7 @@ const RestaurantDetails = (props) => {
         headers: {
           "Content-Type": "application/json, charset= UTF-8",
           Accept: "application/json, text/html, image/png",
+          Authorization: session.token,
         },
       }
     );

@@ -26,7 +26,10 @@ const RestaurantSearch = (props) => {
         `http://${NODE_HOST}:${NODE_PORT}/getListOfRestaurants`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: session.token,
+          },
           body: JSON.stringify({
             filter: Object.keys(props.foodFilter).filter(
               (keyValue) => props.foodFilter[keyValue]

@@ -65,7 +65,10 @@ const MainHeader = (props) => {
         `http://${NODE_HOST}:${NODE_PORT}/getCustomerLocation`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: session.token,
+          },
           body: JSON.stringify({
             customerId: session.primaryID,
           }),
@@ -104,7 +107,10 @@ const MainHeader = (props) => {
         `http://${NODE_HOST}:${NODE_PORT}/getTypeaheadList`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: session.token,
+          },
           body: JSON.stringify({
             input: typeaheadInput,
             deliveryType: deliveryType,

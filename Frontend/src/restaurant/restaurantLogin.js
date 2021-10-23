@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import { setSessionCookie } from "../common/session";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import UberEatsIcon from "../images/UberEatsIcon.png";
+import jwt_decode from "jwt-decode";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -58,11 +59,20 @@ const RestaurantLogin = (props) => {
 
       const data = await response.json();
 
+      // console.log("data", data.token);
+
       if (response.status === 200) {
+        let token = data.token;
+
+        var decoded = jwt_decode(data.token.split(" ")[1]);
+
         setSessionCookie(
           JSON.stringify({
-            primaryID: data.restaurantId,
-            restaurantFlag: true,
+            primaryID: decoded.restaurantId,
+            restaurantFlag: decoded.restaurantFlag,
+            token: token,
+            // primaryID: data.restaurantId,
+            // restaurantFlag: true,
           })
         );
         dispatch(success({ userEmail }));

@@ -1,8 +1,10 @@
 import React from "react";
 import { Container, Modal, Row, Col, Button, Form } from "react-bootstrap";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import { getSessionCookie } from "../common/session";
 
 const RestaurantEditDetails = (props) => {
+  const session = getSessionCookie();
   const onChangeHandler = (event) => {
     event.preventDefault();
 
@@ -62,6 +64,9 @@ const RestaurantEditDetails = (props) => {
         {
           method: "POST",
           body: formData,
+          headers: {
+            Authorization: session.token,
+          },
         }
       );
 

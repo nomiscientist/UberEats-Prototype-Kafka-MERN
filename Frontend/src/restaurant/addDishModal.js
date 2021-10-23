@@ -65,6 +65,9 @@ const AddDishModal = (props) => {
         {
           method: "POST",
           body: formData,
+          headers: {
+            Authorization: session.token,
+          },
         }
       );
 

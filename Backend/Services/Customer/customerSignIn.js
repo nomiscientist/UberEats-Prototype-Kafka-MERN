@@ -1,6 +1,10 @@
 // const CustomerDetailsModel = require("../../Models/CustomerDetailsModel");
 // const { collection } = require("../../Models/CustomerDetailsModel");
 const CustomerDetails = require("../../Models/CustomerDetailsModel");
+const jwt = require("jsonwebtoken");
+const { secret } = require("../../Controller/Common/config");
+const { auth } = require("../../Controller/Common/passport");
+auth();
 
 const customerSignIn = (req, res) => {
   try {
@@ -13,11 +17,15 @@ const customerSignIn = (req, res) => {
 
         if (customerDetail) {
           console.log("Login successful!!", customerDetail);
-
-          res.send({
-            restaurantFlag: false,
+          const payload = {
             customerID: customerDetail._id,
+            restaurantFlag: false,
+          };
+          const token = jwt.sign(payload, secret, {
+            expiresIn: 1008000,
           });
+          console.log("token", token);
+          res.status(200).send({ token: "JWT " + token });
         } else {
           res
             .status(401)
