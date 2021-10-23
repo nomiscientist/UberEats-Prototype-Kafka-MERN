@@ -84,7 +84,7 @@ const Orders = (props) => {
               <Col>
                 {formatTextForOrders(
                   pastOrder.dateOrdered,
-                  pastOrder.totalItems,
+                  pastOrder.totalQuantity,
                   pastOrder.totalPrice
                 )}
               </Col>
@@ -92,7 +92,7 @@ const Orders = (props) => {
                 {" "}
                 <Button
                   variant="light"
-                  onClick={() => onClickHandler(pastOrder.orderId)}
+                  onClick={() => onClickHandler(pastOrder._id)}
                 >
                   View Reciept
                 </Button>
@@ -115,6 +115,7 @@ const Orders = (props) => {
   };
 
   const getPastOrders = async () => {
+    console.log("Hi");
     const response = await fetch(
       `http://${NODE_HOST}:${NODE_PORT}/getPastOrders`,
       {
@@ -129,6 +130,8 @@ const Orders = (props) => {
       }
     );
     const data = await response.json();
+    console.log("setOrdersList", data);
+
     setOrdersList(data);
   };
 

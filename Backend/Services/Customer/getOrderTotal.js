@@ -12,22 +12,25 @@ const getOrderTotal = async (req, res) => {
       finalStatus: "New",
     }).exec();
     // console.log("order", order);
-    let orderId = order._id;
 
-    let orderDetail = await OrderDetails.find({
-      customerId: req.query.customerId,
-      orderId: orderId,
-    }).exec();
+    if (order) {
+      let orderId = order._id;
 
-    // console.log("orderDetail", orderDetail);
+      let orderDetail = await OrderDetails.find({
+        customerId: req.query.customerId,
+        orderId: orderId,
+      }).exec();
 
-    if (orderDetail) {
-      orderDetail.forEach((element) => (subTotal += element.amount));
-      orderDetail.forEach((element) => (totalItems += element.quantity));
+      // console.log("orderDetail", orderDetail);
 
-      // console.log(subTotal, subTotal);
+      if (orderDetail) {
+        orderDetail.forEach((element) => (subTotal += element.amount));
+        orderDetail.forEach((element) => (totalItems += element.quantity));
 
-      res.status(200).send({ subTotal: subTotal, totalItems: totalItems });
+        // console.log(subTotal, subTotal);
+
+        res.status(200).send({ subTotal: subTotal, totalItems: totalItems });
+      }
     }
   } catch (exception) {
     res.sendStatus(500);

@@ -1,25 +1,47 @@
-const con = require("../../Controller/Common/dbConnection");
+const OrderDetails = require("../../Models/OrderDetailsModel");
 
-const showRestaurantOrderDetails = (req, res) => {
-  sqlSelect = `SELECT OrderID,FoodName, Quantity, Price, Amount  FROM OrderDetails where OrderID = (?) `;
+const showRestaurantOrderDetails = async (req, res) => {
+  try {
+    orderDetail = await OrderDetails.find({
+      orderId: req.body.orderId,
+    }).exec();
 
-  con.query(sqlSelect, [req.body.orderId], (err, result) => {
-    if (err) throw err;
-
-    if (result) {
+    if (orderDetail) {
       res.status(200).send(
-        result.map((element) => {
+        orderDetail.map((element) => {
           return {
-            orderId: element.OrderID,
-            foodName: element.FoodName,
-            quantity: element.Quantity,
-            price: element.Price,
-            amount: element.Amount,
+            orderId: element.orderId,
+            foodName: element.dishName,
+            quantity: element.quantity,
+            price: element.price,
+            amount: element.amount,
           };
         })
       );
     }
-  });
+  } catch (exception) {
+    res.sendStatus(500);
+  }
 };
 
 module.exports = showRestaurantOrderDetails;
+
+// sqlSelect = `SELECT OrderID,FoodName, Quantity, Price, Amount  FROM OrderDetails where OrderID = (?) `;
+
+// con.query(sqlSelect, [req.body.orderId], (err, result) => {
+//   if (err) throw err;
+
+//   if (result) {
+//     res.status(200).send(
+//       result.map((element) => {
+//         return {
+//           orderId: element.OrderID,
+//           foodName: element.FoodName,
+//           quantity: element.Quantity,
+//           price: element.Price,
+//           amount: element.Amount,
+//         };
+//       })
+//     );
+//   }
+// });

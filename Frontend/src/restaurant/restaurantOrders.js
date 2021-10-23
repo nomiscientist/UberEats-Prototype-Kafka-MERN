@@ -166,6 +166,7 @@ const RestaurantOrders = () => {
   };
 
   const getCustomerDetails = async (customerId) => {
+    console.log("getcustomerdetails", customerId);
     const response = await fetch(
       `http://${NODE_HOST}:${NODE_PORT}/showCustomerProfile`,
       {
@@ -214,7 +215,7 @@ const RestaurantOrders = () => {
                 <Col>
                   <Button
                     variant="success"
-                    onClick={() => updateDeliveryStatus(order.orderId)}
+                    onClick={() => updateDeliveryStatus(order._id)}
                   >
                     Update Delivery status
                   </Button>
@@ -223,7 +224,7 @@ const RestaurantOrders = () => {
                     placeholder="Order Status"
                     as="select"
                     onChange={(event) =>
-                      onOrderStatusChangeHandler(event, order.orderId)
+                      onOrderStatusChangeHandler(event, order._id)
                     }
                   >
                     {checkDeliveryStatusOptions(order.deliveryType)}
@@ -242,7 +243,7 @@ const RestaurantOrders = () => {
                 {" "}
                 <Button
                   variant="light"
-                  onClick={() => onClickHandler(order.orderId, false)}
+                  onClick={() => onClickHandler(order._id, false)}
                 >
                   View Order Details
                 </Button>

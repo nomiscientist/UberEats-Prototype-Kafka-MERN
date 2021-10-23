@@ -27,7 +27,7 @@ const getListOfRestaurants = async (req, res) => {
           deliveryFlag: "Yes",
         }).exec();
       }
-      // console.log("1st wala", restaurantDetail);
+      console.log("1st wala", restaurantDetail);
     } //end of 1st case
     else if (
       req.body.filter.length > 0 &&
@@ -37,7 +37,7 @@ const getListOfRestaurants = async (req, res) => {
         dishType: { $in: req.body.filter },
       }).exec();
 
-      // console.log("restaurantDish", restaurantDish);
+      console.log("restaurantDish", restaurantDish);
       let restaurantIdList = [];
 
       restaurantDish.forEach((v) => {
@@ -46,7 +46,7 @@ const getListOfRestaurants = async (req, res) => {
         });
       });
 
-      //console.log("restaurantIdList", restaurantIdList);
+      console.log("restaurantIdList", restaurantIdList);
 
       if (restaurantIdList.length > 0) {
         if (req.body.deliveryType === "pickup") {
@@ -61,7 +61,7 @@ const getListOfRestaurants = async (req, res) => {
           }).exec();
         }
       }
-      // console.log("2nd wala", restaurantDetail);
+      console.log("2nd wala", restaurantDetail);
     } //end of 2nd case
     else if (req.body.filter.length > 0 && req.body.typeaheadValue.length > 0) {
       const restaurantDish = await RestaurantDishes.find({
