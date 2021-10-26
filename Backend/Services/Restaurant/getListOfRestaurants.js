@@ -41,23 +41,27 @@ const getListOfRestaurants = async (req, res) => {
       let restaurantIdList = [];
 
       restaurantDish.forEach((v) => {
-        restaurantIdList.push({
-          restaurantId: v.restaurantId,
-        });
+        restaurantIdList.push(v.restaurantId);
       });
 
       console.log("restaurantIdList", restaurantIdList);
 
+      // restaurantIdList.forEach((e) => {
+      //   console.log(e);
+      // });
+
       if (restaurantIdList.length > 0) {
         if (req.body.deliveryType === "pickup") {
+          console.log("hi if");
           restaurantDetail = await RestaurantDetails.find({
             pickupFlag: "Yes",
-            restaurantId: { $in: restaurantIdList },
+            _id: { $in: restaurantIdList },
           }).exec();
         } else {
+          console.log("hi else");
           restaurantDetail = await RestaurantDetails.find({
             deliveryFlag: "Yes",
-            restaurantId: { $in: restaurantIdList },
+            _id: { $in: restaurantIdList },
           }).exec();
         }
       }
@@ -80,33 +84,43 @@ const getListOfRestaurants = async (req, res) => {
       if (req.body.deliveryType === "pickup") {
         restaurantDetail = await RestaurantDetails.find({
           pickupFlag: "Yes",
-          restaurantId: { $in: restaurantIdList },
+          _id: { $in: restaurantIdList },
         }).exec();
       } else {
         restaurantDetail = await RestaurantDetails.find({
           deliveryFlag: "Yes",
-          restaurantId: { $in: restaurantIdList },
+          _id: { $in: restaurantIdList },
         }).exec();
       }
 
-      // console.log("3rd wala", restaurantDetail);
+      console.log("3rd wala", restaurantDetail);
     } else if (
       req.body.filter.length === 0 &&
       req.body.typeaheadValue.length > 0
     ) {
+      let restaurantIdList = [];
+
+      console.log("req.body.typeaheadValue ", req.body.typeaheadValue);
       if (req.body.deliveryType === "pickup") {
         restaurantDetail = await RestaurantDetails.find({
           pickupFlag: "Yes",
-          restaurantId: { $in: req.body.typeaheadValue },
         }).exec();
+
+        restaurantDetail.forEach((v) => {
+          restaurantIdList.push(v._id);
+        });
       } else {
         restaurantDetail = await RestaurantDetails.find({
           deliveryFlag: "Yes",
-          restaurantId: { $in: req.body.typeaheadValue },
+          // restaurantId: { $in: req.body.typeaheadValue },
         }).exec();
+
+        restaurantDetail.forEach((v) => {
+          restaurantIdList.push(v._id);
+        });
       }
 
-      //console.log("4th wala", restaurantDetail);
+      console.log("4th wala", restaurantDetail);
     }
     //end of 4th case
 

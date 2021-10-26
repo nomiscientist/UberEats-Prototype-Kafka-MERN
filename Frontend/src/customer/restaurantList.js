@@ -6,10 +6,16 @@ import { FcLikePlaceholder } from "react-icons/fc";
 import { FcLike } from "react-icons/fc";
 import { useHistory } from "react-router-dom";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import { useSelector } from "react-redux";
 
 const RestaurantList = (props) => {
   const history = useHistory();
   const session = getSessionCookie();
+
+  const restaurantList = useSelector(
+    (state) => state.mainHeader.restaurantList
+  );
+
   const viewImageHandler = (restaurant) => {
     if (restaurant.imagePreview) {
       return (
@@ -60,7 +66,7 @@ const RestaurantList = (props) => {
   return (
     // style={{ width: "90%", height: "80%" }}
     <Row>
-      {props.restaurantList.map((restaurant, key) => {
+      {restaurantList.map((restaurant, key) => {
         return (
           <Col xs={12} md={3} className="mb-4">
             <Card>

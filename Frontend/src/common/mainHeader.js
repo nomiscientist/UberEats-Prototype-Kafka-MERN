@@ -31,13 +31,24 @@ import UberEatsIcon from "../images/UberEatsIcon.png";
 const MainHeader = (props) => {
   let showTabs = props.tab;
   const [modalShow, setModalShow] = useState(false);
-  const [typeaheadOutput, setTypeaheadOutput] = useState([]);
-  const [valueSelected, setValueSelected] = useState([{}]);
-  const [foodFilter, setFoodFilter] = useState({});
-  const [restaurantList, setRestaurantList] = useState([]);
-  const [customerLocation, setCustomerLocation] = useState("");
+  // const [typeaheadOutput, setTypeaheadOutput] = useState([]);
+  //const [valueSelected, setValueSelected] = useState([{}]);
+  // const [foodFilter, setFoodFilter] = useState({});
+  // const [restaurantList, setRestaurantList] = useState([]);
+  // const [customerLocation, setCustomerLocation] = useState("");
+
   const dispatch = useDispatch();
   const deliveryType = useSelector((state) => state.order.deliveryType);
+  const customerLocation = useSelector(
+    (state) => state.mainHeader.customerLocation
+  );
+  const typeaheadOutput = useSelector(
+    (state) => state.mainHeader.typeaheadOutput
+  );
+  const typeaheadSelected = useSelector(
+    (state) => state.mainHeader.typeaheadSelected
+  );
+
   // Used custom hook
   const onHide = () => setModalShow(false);
   const { cartModal, getCartDetails, cartDetails } = useCartCheckoutModal(
@@ -76,12 +87,15 @@ const MainHeader = (props) => {
       );
 
       const data = await response.json();
-      setCustomerLocation(data.city);
+      let city = data.city;
+      dispatch({ type: reduxConstants.CUSTOMER_LOCATION, city });
+      // setCustomerLocation(data.city);
     }
   };
 
   const onChangeHandler = (selected) => {
-    setValueSelected(selected);
+    // setValueSelected(selected);
+    dispatch({ type: reduxConstants.TYPEAHEAD_SELECTED, selected });
     if (selected[0]?.isRestaurant) {
       window.sessionStorage.setItem("restaurantId", selected[0].id);
       history.push("/restaurantDetails");
@@ -120,9 +134,11 @@ const MainHeader = (props) => {
 
       let data = await response.json();
 
-      setTypeaheadOutput(() => {
-        return data;
-      });
+      // setTypeaheadOutput(() => {
+      //   return data;
+      // });
+      console.log("typeahead output", data);
+      dispatch({ type: reduxConstants.TYPEAHEAD_OUTPUT, data });
     } catch (error) {
       console.log(error);
     }
@@ -133,19 +149,17 @@ const MainHeader = (props) => {
     else if (tab === "restaurantSearch")
       return (
         <RestaurantSearch
-          foodFilter={foodFilter}
-          setFoodFilter={setFoodFilter}
-          restaurantList={restaurantList}
-          setRestaurantList={setRestaurantList}
-          typeaheadValue={valueSelected}
+          // foodFilter={foodFilter}
+          // setFoodFilter={setFoodFilter}
+          // typeaheadValue={valueSelected}
           deliveryType={deliveryType}
         />
       );
     else if (tab === "favorites")
       return (
         <Favorites
-          restaurantList={restaurantList}
-          setRestaurantList={setRestaurantList}
+        // restaurantList={restaurantList}
+        // setRestaurantList={setRestaurantList}
         />
       );
     else if (tab === "checkout") return <Checkout />;
@@ -224,7 +238,7 @@ const MainHeader = (props) => {
                   onChange={onChangeHandler}
                   onInputChange={inputChangeHandler}
                   options={typeaheadOutput}
-                  selected={valueSelected.name}
+                  selected={typeaheadSelected.name}
                 />
               </Col>
               <Col className="mt-3" xs={4} md={2}>

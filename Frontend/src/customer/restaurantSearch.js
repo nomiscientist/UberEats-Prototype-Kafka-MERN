@@ -7,17 +7,27 @@ import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import ImageDisplay from "../images/restSearchpage.jpeg";
 import ImageDisplay1 from "../images/restSearchpage2.jpeg";
 import Image from "react-bootstrap/Image";
+import { useDispatch, useSelector } from "react-redux";
+import { reduxConstants } from "../constants/reduxConstants.js";
 
 const RestaurantSearch = (props) => {
   const session = getSessionCookie();
+  const dispatch = useDispatch();
+  const foodFilter = useSelector((state) => state.mainHeader.foodFilter);
+  const typeaheadSelected = useSelector(
+    (state) => state.mainHeader.typeaheadSelected
+  );
 
   const onFilterCheckHandler = (event) => {
-    props.setFoodFilter((prevState) => {
-      return {
-        ...prevState,
-        [event.target.name]: event.target.checked,
-      };
-    });
+    // props.setFoodFilter((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     [event.target.name]: event.target.checked,
+    //   };
+    // });
+    let foodFil = { [event.target.name]: event.target.checked };
+
+    dispatch({ type: reduxConstants.FOOD_FILTER, foodFil });
   };
 
   const fetchFilteredRestaurants = React.useCallback(async () => {
@@ -31,11 +41,11 @@ const RestaurantSearch = (props) => {
             Authorization: session.token,
           },
           body: JSON.stringify({
-            filter: Object.keys(props.foodFilter).filter(
-              (keyValue) => props.foodFilter[keyValue]
+            filter: Object.keys(foodFilter).filter(
+              (keyValue) => foodFilter[keyValue]
             ),
-            typeaheadValue: props.typeaheadValue[0].id
-              ? props.typeaheadValue[0].id
+            typeaheadValue: typeaheadSelected[0].id
+              ? typeaheadSelected[0].id
               : [],
             customerId: session.primaryID,
             deliveryType: props.deliveryType,
@@ -45,23 +55,27 @@ const RestaurantSearch = (props) => {
 
       let data = await response.json();
 
-      props.setRestaurantList(
-        data.map((d) => {
-          return {
-            ...d,
-            imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
-          };
-        })
-      );
+      let restList = data.map((d) => {
+        return {
+          ...d,
+          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
+        };
+      });
+
+      dispatch({ type: reduxConstants.RESTAURANT_LIST, restList });
+
+      // props.setRestaurantList(
+      //   data.map((d) => {
+      //     return {
+      //       ...d,
+      //       imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
+      //     };
+      //   })
+      // );
     } catch (error) {
       console.log(error);
     }
-  }, [
-    props.foodFilter,
-    props.typeaheadValue,
-    props.deliveryType,
-    session.primaryID,
-  ]);
+  }, [foodFilter, typeaheadSelected, props.deliveryType, session.primaryID]);
 
   useEffect(() => {
     fetchFilteredRestaurants();
@@ -172,7 +186,7 @@ const RestaurantSearch = (props) => {
           </Col>
           <Col xs={12} md={10}>
             <RestaurantList
-              restaurantList={props.restaurantList}
+              // restaurantList={restaurantList}
               fetchFilteredRestaurants={fetchFilteredRestaurants}
             />
           </Col>
