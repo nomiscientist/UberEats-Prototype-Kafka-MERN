@@ -11,12 +11,12 @@ var bodyParser = require("body-parser");
 
 // const { mongoDB } = require("./Controller/Common/config");
 // const mongoose = require("mongoose");
-// const { collection } = require("./Models/CustomerDetailsModel");
+// const { collection } = require("./Models/CustomerDetailsModel");//
 // const CustomerDetails = require("./Models/CustomerDetailsModel");
-const customerSignIn = require("./Services/Customer/customerSignIn");
-const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
-const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo");
-const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
+// const customerSignIn = require("./Services/Customer/customerSignIn");
+// const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
+// const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo");
+// const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
 // const getProfileInfo = require("./Services/Customer/getProfileInfo");
 // const getCustomerLocation = require("./Services/Customer/getCustomerLocation");
 // const updateProfileInfo = require("./Services/Customer/updateProfileInfo");
@@ -91,7 +91,7 @@ auth();
 var upload = multer({ storage: storage });
 
 app.post("/customerSignIn", function (req, res) {
-  kafka.make_request("loginCustomer", req.body, function (err, results) {
+  kafka.make_request("signInCustomer", req.body, function (err, results) {
     console.log("in result");
     console.log(results);
     if (err) {
@@ -108,30 +108,41 @@ app.post("/customerSignIn", function (req, res) {
   });
 });
 
-// app.post("/book", function (req, res) {
-//   kafka.make_request("post_book", req.body, function (err, results) {
-//     console.log("in result");
-//     console.log(results);
-//     if (err) {
-//       console.log("Inside err");
-//       res.json({
-//         status: "error",
-//         msg: "System Error, Try Again.",
-//       });
-//     } else {
-//       console.log("Inside else");
-//       res.json({
-//         updatedList: results,
-//       });
+app.post("/customerSignUpInfo", function (req, res) {
+  kafka.make_request("registerCustomer", req.body, function (err, results) {
+    console.log("in result");
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
-//       res.end();
-//     }
-//   });
-// });
-
-// app.post("/customerSignUpInfo", customerSignUpInfo);
-
-// app.post("/restaurantLoginInfo", restaurantLoginInfo);
+app.post("/restaurantLoginInfo", function (req, res) {
+  kafka.make_request("signInRestaurant", req.body, function (err, results) {
+    console.log("in result");
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 // app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
 

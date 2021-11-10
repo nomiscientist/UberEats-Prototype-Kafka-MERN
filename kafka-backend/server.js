@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 //topics files
 //var signin = require('./services/signin.js');
 var connection = new require("./kafka/Connection");
-var LoginCustomer = require("./services/login.js");
+var LoginCustomer = require("./services/customer/login.js");
+var RegisterCustomer = require("./services/customer/customerSignUpInfo");
+var LoginRestaurant = require("./services/restaurant/restaurantLoginInfo");
 
 var options = {
   useNewUrlParser: true,
@@ -33,7 +35,7 @@ function handleTopicRequest(topic_name, fname) {
     var data = JSON.parse(message.value);
 
     fname.handle_request(data.data, function (err, res) {
-      console.log("after handle" + res);
+      console.log("after handle", res);
       var payloads = [
         {
           topic: data.replyTo,
@@ -44,6 +46,7 @@ function handleTopicRequest(topic_name, fname) {
           partition: 0,
         },
       ];
+      console.log("messagegesgsgddgdg", payloads[0].messages);
       producer.send(payloads, function (err, data) {
         console.log(data);
       });
@@ -54,4 +57,8 @@ function handleTopicRequest(topic_name, fname) {
 // Add your TOPICs here
 //first argument is topic name
 //second argument is a function that will handle this topic request
-handleTopicRequest("loginCustomer", LoginCustomer);
+handleTopicRequest("signInCustomer", LoginCustomer);
+
+handleTopicRequest("registerCustomer", RegisterCustomer);
+
+handleTopicRequest("signInRestaurant", LoginRestaurant);
