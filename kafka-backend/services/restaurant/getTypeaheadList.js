@@ -1,18 +1,18 @@
 const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 const RestaurantDishes = require("../../Models/RestaurantDishesModel");
 
-const getTypeaheadList = async (req, res) => {
+const handle_request = async (list, callback) => {
   let listOfTypeahead = [];
 
   let flag;
 
-  if (req.body.deliveryType === "delivery") {
+  if (list.deliveryType === "delivery") {
     flag = "deliveryFlag";
   } else {
     flag = "pickupFlag";
   }
 
-  const inputValue = req.body.input;
+  const inputValue = list.input;
 
   try {
     const restaurantDetail1 = await RestaurantDetails.find({
@@ -52,7 +52,6 @@ const getTypeaheadList = async (req, res) => {
         });
       });
     }
-    // }
 
     const restaurantDish = await RestaurantDishes.aggregate([
       {
@@ -78,11 +77,10 @@ const getTypeaheadList = async (req, res) => {
       });
     }
 
-    console.log("listOfTypeahead", listOfTypeahead);
-    res.status(200).send(listOfTypeahead);
+    callback(null, listOfTypeahead);
   } catch (exception) {
-    res.sendStatus(500);
+    callback({ message: exception }, null);
   }
 };
 
-module.exports = getTypeaheadList;
+exports.handle_request = handle_request;

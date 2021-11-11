@@ -6,44 +6,7 @@ const kafka = require("./kafka/client");
 // const Router = require("./routes");
 const path = require("path");
 var bodyParser = require("body-parser");
-// const con = require("./Controller/Common/dbConnection");
-// const CustomerDetailsModel = require("./Models/CustomerDetailsModel");
 
-// const { mongoDB } = require("./Controller/Common/config");
-// const mongoose = require("mongoose");
-// const { collection } = require("./Models/CustomerDetailsModel");//
-// const CustomerDetails = require("./Models/CustomerDetailsModel");
-// const customerSignIn = require("./Services/Customer/customerSignIn");
-// const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
-// const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo");
-// const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
-// const getProfileInfo = require("./Services/Customer/getProfileInfo");
-// const getCustomerLocation = require("./Services/Customer/getCustomerLocation");
-// const updateProfileInfo = require("./Services/Customer/updateProfileInfo");
-// const restaurantDetailsInfo = require("./Services/Restaurant/restaurantDetailsInfo");
-// const restaurantDetailsInfoUpdate = require("./Services/Restaurant/restaurantDetailsInfoUpdate");
-// const addFoodDishes = require("./Services/Restaurant/addFoodDishes");
-// const foodItemsDisplay = require("./Services/Restaurant/foodItemsDisplay");
-// const editFoodDishes = require("./Services/Restaurant/editFoodDishes");
-// const showCustomerProfile = require("./Services/Restaurant/showCustomerProfile");
-// const getTypeaheadList = require("./Services/Restaurant/getTypeaheadList");
-// const getDeliveryAddress = require("./Services/Customer/getDeliveryAddress");
-// const getListOfRestaurants = require("./Services/Restaurant/getListOfRestaurants");
-// const createFavouritesList = require("./Services/Customer/createFavouritesList");
-// const getFavoriteRestaurants = require("./Services/Customer/getFavoriteRestaurants");
-// const addOrdertoCart = require("./Services/Restaurant/addOrdertoCart");
-// const showCartDetails = require("./Services/Customer/showCartDetails");
-// const updateCartOrderDetails = require("./Services/Customer/updateCartOrderDetails");
-// const getOrderTotal = require("./Services/Customer/getOrderTotal");
-// const getDeliveryType = require("./Services/Customer/getDeliveryType");
-// const addDeliveryAddress = require("./Services/Customer/addDeliveryAddress");
-// const bookOrder = require("./Services/Customer/bookOrder");
-// const updateOrderStatus = require("./Services/Restaurant/updateOrderStatus");
-// const getRestaurantOrders = require("./Services/Restaurant/getRestaurantOrders");
-// const showRestaurantOrderDetails = require("./Services/Restaurant/showRestaurantOrderDetails");
-// const getPastOrders = require("./Services/Customer/getPastOrders");
-// const getReceiptDetails = require("./Services/Customer/getReceiptDetails");
-// const createNewOrder = require("./Services/Customer/createNewOrder");
 const passport = require("passport");
 const { checkAuth } = require("./Controller/Common/passport");
 const { auth } = require("./Controller/Common/passport");
@@ -59,22 +22,6 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-
-// var options = {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   maxPoolSize: 500,
-//   wtimeoutMS: 2500,
-// };
-
-// mongoose.connect(mongoDB, options, (err, res) => {
-//   if (err) {
-//     console.log(err);
-//     console.log("MongoDB connection failed");
-//   } else {
-//     console.log("MongoDB connected!!");
-//   }
-// });
 
 app.use("/", express.static(path.join(__dirname, "/images")));
 
@@ -162,7 +109,25 @@ app.post("/restaurantSignUpInfo", function (req, res) {
   });
 });
 
-// app.get("/getProfileInfo", checkAuth, upload.single("file"), getProfileInfo);
+app.get("/getProfileInfo", upload.single("file"), function (req, res) {
+  kafka.make_request("profileInfo", req.query, function (err, results) {
+    console.log("in result");
+    checkAuth;
+    // upload.single("file");
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 app.post("/getCustomerLocation", function (req, res) {
   kafka.make_request("customerLocation", req.body, function (err, results) {
@@ -183,12 +148,25 @@ app.post("/getCustomerLocation", function (req, res) {
   });
 });
 
-// app.post(
-//   "/updateProfileInfo",
-//   checkAuth,
-//   upload.single("file"),
-//   updateProfileInfo
-// );
+app.post("/updateProfileInfo", upload.single("file"), function (req, res) {
+  kafka.make_request("updateProfileInfo", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+    // upload.single("file");
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 app.get(
   "/restaurantDetailsInfo",
@@ -329,26 +307,244 @@ app.post("/showCustomerProfile", function (req, res) {
     }
   });
 });
-// app.post("/getTypeaheadList", checkAuth, getTypeaheadList);
 
-// app.get("/getDeliveryAddress", checkAuth, getDeliveryAddress);
+app.post("/getTypeaheadList", function (req, res) {
+  kafka.make_request("typeaheadList", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
 
-// app.post("/getListOfRestaurants", checkAuth, getListOfRestaurants);
-// app.post("/createFavouritesList", checkAuth, createFavouritesList);
-// app.post("/getFavoriteRestaurants", checkAuth, getFavoriteRestaurants);
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
-// app.post("/addOrdertoCart", checkAuth, addOrdertoCart);
+app.get("/getDeliveryAddress", function (req, res) {
+  kafka.make_request("deliveryAddress", req.query, function (err, results) {
+    console.log("in result");
+    checkAuth;
 
-// app.post("/showCartDetails", checkAuth, showCartDetails);
-// app.post("/updateCartOrderDetails", checkAuth, updateCartOrderDetails);
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
-// app.get("/getOrderTotal", checkAuth, getOrderTotal);
+app.post("/getListOfRestaurants", function (req, res) {
+  kafka.make_request("listOfRestaurants", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
 
-// app.get("/getDeliveryType", checkAuth, getDeliveryType);
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
-// app.post("/addDeliveryAddress", checkAuth, addDeliveryAddress);
+app.post("/createFavouritesList", function (req, res) {
+  kafka.make_request("createFavorite", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
 
-// app.post("/bookOrder", checkAuth, bookOrder);
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+app.post("/getFavoriteRestaurants", function (req, res) {
+  kafka.make_request("favoriteRestaurant", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.post("/addOrdertoCart", function (req, res) {
+  kafka.make_request("addOrdertoCart", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.post("/showCartDetails", function (req, res) {
+  kafka.make_request("cartDetails", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+app.post("/updateCartOrderDetails", function (req, res) {
+  kafka.make_request("updateCartDetails", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.get("/getOrderTotal", function (req, res) {
+  kafka.make_request("orderTotal", req.query, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.get("/getDeliveryType", function (req, res) {
+  kafka.make_request("deliveryType", req.query, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.post("/addDeliveryAddress", function (req, res) {
+  kafka.make_request("addDeliveryAddress", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.post("/bookOrder", function (req, res) {
+  kafka.make_request("bookorder", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 app.post("/updateOrderStatus", function (req, res) {
   kafka.make_request("orderStatusUpdate", req.body, function (err, results) {
@@ -414,7 +610,25 @@ app.post("/showRestaurantOrderDetails", function (req, res) {
   );
 });
 
-// app.post("/getPastOrders", checkAuth, getPastOrders);
+app.post("/getPastOrders", function (req, res) {
+  kafka.make_request("pastOrders", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 app.post("/getReceiptDetails", function (req, res) {
   kafka.make_request("receiptDetails", req.body, function (err, results) {
@@ -436,7 +650,25 @@ app.post("/getReceiptDetails", function (req, res) {
   });
 });
 
-// app.post("/createNewOrder", checkAuth, createNewOrder);
+app.post("/createNewOrder", function (req, res) {
+  kafka.make_request("newOrder", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

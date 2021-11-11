@@ -1,21 +1,21 @@
 const CustomerDetails = require("../../Models/CustomerDetailsModel");
 
-const getDeliveryAddress = async (req, res) => {
+const handle_request = async (deliveryAddress, callback) => {
   try {
     let customer = await CustomerDetails.findOne({
-      _id: req.query.customerId,
+      _id: deliveryAddress.customerId,
     }).exec();
 
     if (customer) {
-      res.status(200).send({
+      callback(null, {
         addressLine1: customer.address1,
         addressLine2: customer.address2,
         city: customer.city,
       });
     }
   } catch (exception) {
-    res.sendStatus(500);
+    callback({ message: exception }, null);
   }
 };
 
-module.exports = getDeliveryAddress;
+exports.handle_request = handle_request;

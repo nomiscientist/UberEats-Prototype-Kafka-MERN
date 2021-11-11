@@ -2,39 +2,34 @@
 const OrderDetails = require("../../Models/OrderDetailsModel");
 const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 
-const updateCartOrderDetails = async (req, res) => {
+const handle_request = async (cartDetails, callback) => {
   try {
-    if (req.body.quantity === 0) {
+    if (cartDetails.quantity === 0) {
       await OrderDetails.findOneAndDelete({
-        _id: req.body._id,
+        _id: cartDetails._id,
       }).exec();
 
-      return res.status(200).send([]);
+      // callback(null, []);
     } else {
-      console.log("here?");
       let orderDetail = await OrderDetails.findOne({
-        _id: req.body._id,
+        _id: cartDetails._id,
       }).exec();
-
-      console.log("orderDetail?", orderDetail);
 
       if (orderDetail) {
         OrderDetails.updateOne(orderDetail, {
-          quantity: req.body.quantity,
-          amount: req.body.quantity * req.body.price,
+          quantity: cartDetails.quantity,
+          amount: cartDetails.quantity * cartDetails.price,
         }).exec();
       }
     }
 
     let restaurant = await RestaurantDetails.findOne({
-      _id: req.body.restaurantId,
+      _id: cartDetails.restaurantId,
     }).exec();
 
-    console.log("restaurant?", restaurant);
-
     let orderDetail = await OrderDetails.find({
-      customerId: req.body.customerId,
-      orderId: req.body.orderId,
+      customerId: cartDetails.customerId,
+      orderId: cartDetails.orderId,
     }).exec();
 
     let result = orderDetail.map((element) => {
@@ -43,12 +38,12 @@ const updateCartOrderDetails = async (req, res) => {
         restaurantName: restaurant.restaurantName,
       };
     });
-    console.log("result", result);
+
     result = JSON.parse(JSON.stringify(result));
-    res.status(200).send(result);
+    callback(null, result);
   } catch (exception) {
-    res.sendStatus(500);
+    callback({ message: exception }, null);
   }
 };
 
-module.exports = updateCartOrderDetails;
+exports.handle_request = handle_request;

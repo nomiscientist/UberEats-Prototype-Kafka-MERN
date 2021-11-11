@@ -3,22 +3,22 @@ const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 const RestaurantDishes = require("../../Models/RestaurantDishesModel");
 const CustomerDetails = require("../../Models/CustomerDetailsModel");
 
-const getListOfRestaurants = async (req, res) => {
-  // console.log("=====================");
-
+const handle_request = async (listDetails, callback) => {
   try {
     let customerDetail = await CustomerDetails.findOne({
-      _id: req.body.customerId,
+      _id: listDetails.customerId,
     }).exec();
 
     let customerLocation = customerDetail?.city;
     let resultFavRest = customerDetail.favoriteRestaurant;
-    console.log("resultFavRest", resultFavRest);
 
     let restaurantDetail = [];
 
-    if (req.body.filter.length === 0 && req.body.typeaheadValue.length === 0) {
-      if (req.body.deliveryType === "pickup") {
+    if (
+      listDetails.filter.length === 0 &&
+      listDetails.typeaheadValue.length === 0
+    ) {
+      if (listDetails.deliveryType === "pickup") {
         restaurantDetail = await RestaurantDetails.find({
           pickupFlag: "Yes",
         }).exec();
@@ -27,50 +27,42 @@ const getListOfRestaurants = async (req, res) => {
           deliveryFlag: "Yes",
         }).exec();
       }
-      console.log("1st wala", restaurantDetail);
     } //end of 1st case
     else if (
-      req.body.filter.length > 0 &&
-      req.body.typeaheadValue.length === 0
+      listDetails.filter.length > 0 &&
+      listDetails.typeaheadValue.length === 0
     ) {
       const restaurantDish = await RestaurantDishes.find({
-        dishType: { $in: req.body.filter },
+        dishType: { $in: listDetails.filter },
       }).exec();
 
-      console.log("restaurantDish", restaurantDish);
       let restaurantIdList = [];
 
       restaurantDish.forEach((v) => {
         restaurantIdList.push(v.restaurantId);
       });
 
-      console.log("restaurantIdList", restaurantIdList);
-
-      // restaurantIdList.forEach((e) => {
-      //   console.log(e);
-      // });
-
       if (restaurantIdList.length > 0) {
-        if (req.body.deliveryType === "pickup") {
-          console.log("hi if");
+        if (listDetails.deliveryType === "pickup") {
           restaurantDetail = await RestaurantDetails.find({
             pickupFlag: "Yes",
             _id: { $in: restaurantIdList },
           }).exec();
         } else {
-          console.log("hi else");
           restaurantDetail = await RestaurantDetails.find({
             deliveryFlag: "Yes",
             _id: { $in: restaurantIdList },
           }).exec();
         }
       }
-      console.log("2nd wala", restaurantDetail);
     } //end of 2nd case
-    else if (req.body.filter.length > 0 && req.body.typeaheadValue.length > 0) {
+    else if (
+      listDetails.filter.length > 0 &&
+      listDetails.typeaheadValue.length > 0
+    ) {
       const restaurantDish = await RestaurantDishes.find({
-        dishType: { $in: req.body.filter },
-        restaurantId: { $in: req.body.typeaheadValue },
+        dishType: { $in: listDetails.filter },
+        restaurantId: { $in: listDetails.typeaheadValue },
       }).exec();
 
       let restaurantIdList = [];
@@ -81,7 +73,7 @@ const getListOfRestaurants = async (req, res) => {
         });
       });
 
-      if (req.body.deliveryType === "pickup") {
+      if (listDetails.deliveryType === "pickup") {
         restaurantDetail = await RestaurantDetails.find({
           pickupFlag: "Yes",
           _id: { $in: restaurantIdList },
@@ -92,16 +84,14 @@ const getListOfRestaurants = async (req, res) => {
           _id: { $in: restaurantIdList },
         }).exec();
       }
-
-      console.log("3rd wala", restaurantDetail);
     } else if (
-      req.body.filter.length === 0 &&
-      req.body.typeaheadValue.length > 0
+      listDetails.filter.length === 0 &&
+      listDetails.typeaheadValue.length > 0
     ) {
       let restaurantIdList = [];
 
-      console.log("req.body.typeaheadValue ", req.body.typeaheadValue);
-      if (req.body.deliveryType === "pickup") {
+      console.log("listDetails.typeaheadValue ", listDetails.typeaheadValue);
+      if (listDetails.deliveryType === "pickup") {
         restaurantDetail = await RestaurantDetails.find({
           pickupFlag: "Yes",
         }).exec();
@@ -112,15 +102,13 @@ const getListOfRestaurants = async (req, res) => {
       } else {
         restaurantDetail = await RestaurantDetails.find({
           deliveryFlag: "Yes",
-          // restaurantId: { $in: req.body.typeaheadValue },
+          // restaurantId: { $in: listDetails.typeaheadValue },
         }).exec();
 
         restaurantDetail.forEach((v) => {
           restaurantIdList.push(v._id);
         });
       }
-
-      console.log("4th wala", restaurantDetail);
     }
     //end of 4th case
 
@@ -128,7 +116,6 @@ const getListOfRestaurants = async (req, res) => {
 
     if (restaurantDetail) {
       // if (resultFavRest) {
-      console.log("final h kya", restaurantDetail);
 
       let newList = restaurantDetail.map((restaurant) => {
         let isLiked = false;
@@ -140,21 +127,14 @@ const getListOfRestaurants = async (req, res) => {
           isLiked: isLiked,
         };
       });
-      console.log("newList", newList);
 
       orderOfRestaurants = sortListOfRestaurants(newList, customerLocation);
-      // } else {
-      //   orderOfRestaurants = sortListOfRestaurants(
-      //     restaurantDetail,
-      //     customerLocation
-      //   );
-      // }
 
       console.log("orderOfRestaurants", orderOfRestaurants);
-      res.send(orderOfRestaurants);
+      callback(null, orderOfRestaurants);
     }
   } catch (exception) {
-    res.sendStatus(500);
+    callback({ message: exception }, null);
   }
 };
-module.exports = getListOfRestaurants;
+exports.handle_request = handle_request;

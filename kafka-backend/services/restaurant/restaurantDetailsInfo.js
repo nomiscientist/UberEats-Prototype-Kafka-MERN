@@ -3,21 +3,10 @@ const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 const multer = require("multer");
 
 const handle_request = async (restaurantDetails, callback) => {
-  // const restaurantDetailsInfo = (req, res, err) => {
-
-  // if (err instanceof multer.MulterError) {
-  //   // return res.status(500).json(err);
-  //   callback({ message: err }, null);
-  // }
-
   try {
     let restaurantDetail = await RestaurantDetails.findOne({
       _id: restaurantDetails.restaurantId,
     });
-    // (error, restaurantDetail) => {
-    //   if (error) {
-    //     throw error;
-    //   }
 
     if (restaurantDetail) {
       callback(null, {
@@ -41,7 +30,6 @@ const handle_request = async (restaurantDetails, callback) => {
       throw error;
     }
   } catch (exception) {
-    // res.sendStatus(500);
     callback({ message: exception }, null);
   }
 };

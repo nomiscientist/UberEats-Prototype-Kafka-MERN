@@ -26,13 +26,11 @@ const handle_request = async (foodDetails, callback) => {
       });
 
       callback(null, responseList);
-      // res.send(responseList);
     } else {
       throw error;
     }
   } catch (exception) {
     callback({ message: exception }, null);
-    //console.log(error);
   }
 };
 

@@ -1,4 +1,3 @@
-//const con = require("../../Controller/Common/dbConnection");
 const OrderDetails = require("../../Models/OrderDetailsModel");
 
 const handle_request = async (receiptDetails, callback) => {

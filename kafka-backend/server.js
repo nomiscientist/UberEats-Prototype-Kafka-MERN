@@ -19,6 +19,22 @@ var RestaurantOrderDetails = require("./services/restaurant/showRestaurantOrderD
 var OrderStatusUpdate = require("./services/restaurant/updateOrderStatus");
 var ReceiptDetails = require("./services/customer/getReceiptDetails");
 var CustomerLocation = require("./services/customer/getCustomerLocation");
+var ProfileInfo = require("./services/customer/getProfileInfo");
+var UpdateProfileInfo = require("./services/customer/updateProfileInfo");
+var DeliveryAddress = require("./services/customer/getDeliveryAddress");
+var DeliveryType = require("./services/customer/getDeliveryType");
+var AddDeliveryAddress = require("./services/customer/addDeliveryAddress");
+var Bookorder = require("./services/customer/bookOrder");
+var OrderTotal = require("./services/customer/getOrderTotal");
+var PastOrders = require("./services/customer/getPastOrders");
+var CartDetails = require("./services/customer/showCartDetails");
+var FavoriteRestaurant = require("./services/customer/getFavoriteRestaurants");
+var CreateFavorite = require("./services/customer/createFavouritesList");
+var UpdateCartDetails = require("./services/customer/updateCartOrderDetails");
+var NewOrder = require("./services/customer/createNewOrder");
+var ListOfRestaurants = require("./services/restaurant/getListOfRestaurants");
+var AddOrdertoCart = require("./services/restaurant/addOrdertoCart");
+var TypeaheadList = require("./services/restaurant/getTypeaheadList");
 
 var options = {
   useNewUrlParser: true,
@@ -98,3 +114,35 @@ handleTopicRequest("orderStatusUpdate", OrderStatusUpdate);
 handleTopicRequest("receiptDetails", ReceiptDetails);
 
 handleTopicRequest("customerLocation", CustomerLocation);
+
+handleTopicRequest("profileInfo", ProfileInfo);
+
+handleTopicRequest("updateProfileInfo", UpdateProfileInfo);
+
+handleTopicRequest("deliveryAddress", DeliveryAddress);
+
+handleTopicRequest("deliveryType", DeliveryType);
+
+handleTopicRequest("addDeliveryAddress", AddDeliveryAddress);
+
+handleTopicRequest("bookorder", Bookorder);
+
+handleTopicRequest("orderTotal", OrderTotal);
+
+handleTopicRequest("pastOrders", PastOrders);
+
+handleTopicRequest("cartDetails", CartDetails);
+
+handleTopicRequest("favoriteRestaurant", FavoriteRestaurant);
+
+handleTopicRequest("createFavorite", CreateFavorite);
+
+handleTopicRequest("updateCartDetails", UpdateCartDetails);
+
+handleTopicRequest("newOrder", NewOrder);
+
+handleTopicRequest("listOfRestaurants", ListOfRestaurants);
+
+handleTopicRequest("addOrdertoCart", AddOrdertoCart);
+
+handleTopicRequest("typeaheadList", TypeaheadList);

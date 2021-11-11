@@ -2,13 +2,7 @@ const RestaurantDetailsModel = require("../../Models/RestaurantDetailsModel");
 const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 const multer = require("multer");
 
-// const restaurantDetailsInfoUpdate = (req, res, err) => {
-
 const handle_request = async (restaurantDetails, callback) => {
-  // if (err instanceof multer.MulterError) {
-  //   return res.status(500).json(err);
-  // }
-
   try {
     const filter = { _id: restaurantDetails.restaurantId };
     const update = {

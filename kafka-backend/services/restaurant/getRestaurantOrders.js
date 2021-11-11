@@ -2,7 +2,7 @@ const Orders = require("../../Models/OrdersModel");
 
 const handle_request = async (registrationOrders, callback) => {
   let order;
-  console.log("printing", registrationOrders);
+
   try {
     if (registrationOrders.orderStatus.length > 0) {
       order = await Orders.find({
