@@ -87,7 +87,7 @@ const MainHeader = (props) => {
       );
 
       const data = await response.json();
-      let city = data.city;
+      let city = data?.city;
       dispatch({ type: reduxConstants.CUSTOMER_LOCATION, city });
       // setCustomerLocation(data.city);
     }

@@ -144,11 +144,44 @@ app.post("/restaurantLoginInfo", function (req, res) {
   });
 });
 
-// app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
+app.post("/restaurantSignUpInfo", function (req, res) {
+  kafka.make_request("registerRestaurant", req.body, function (err, results) {
+    console.log("in result");
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 // app.get("/getProfileInfo", checkAuth, upload.single("file"), getProfileInfo);
 
-// app.post("/getCustomerLocation", checkAuth, getCustomerLocation);
+app.post("/getCustomerLocation", function (req, res) {
+  kafka.make_request("customerLocation", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 // app.post(
 //   "/updateProfileInfo",
@@ -157,33 +190,145 @@ app.post("/restaurantLoginInfo", function (req, res) {
 //   updateProfileInfo
 // );
 
-// app.get(
-//   "/restaurantDetailsInfo",
-//   checkAuth,
-//   upload.single("file"),
-//   restaurantDetailsInfo
-// );
+app.get(
+  "/restaurantDetailsInfo",
+  // checkAuth,
+  // upload.single("file"),
+  function (req, res) {
+    kafka.make_request("restaurantDetails", req.query, function (err, results) {
+      console.log("in result");
+      checkAuth;
+      upload.single("file");
+      console.log(results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "System Error, Try Again.",
+        });
+      } else {
+        console.log("Inside else");
+        res.status(200).json(results);
+        res.end();
+      }
+    });
+  }
+);
 
-// app.post(
-//   "/restaurantDetailsInfoUpdate",
-//   checkAuth,
-//   upload.single("file"),
-//   restaurantDetailsInfoUpdate
-// );
+app.post(
+  "/restaurantDetailsInfoUpdate",
+  // checkAuth,
+  upload.single("file"),
+  function (req, res) {
+    console.log("req.body", req.body);
+    kafka.make_request(
+      "restaurantDetailsUpdate",
+      req.body,
+      function (err, results) {
+        console.log("in result");
+        checkAuth;
+        upload.single("file");
+        console.log(results);
+        if (err) {
+          console.log("Inside err");
+          res.json({
+            status: "error",
+            msg: "System Error, Try Again.",
+          });
+        } else {
+          console.log("Inside else");
+          res.status(200).json(results);
+          res.end();
+        }
+      }
+    );
+  }
+);
 
-// app.post("/addFoodItems", checkAuth, upload.single("file"), addFoodDishes);
+app.post("/addFoodItems", upload.single("file"), function (req, res) {
+  console.log("req.body", req.body);
+  kafka.make_request("addDish", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
-// app.get(
-//   "/foodItemsDisplay",
-//   checkAuth,
-//   upload.single("file"),
-//   foodItemsDisplay
-// );
+app.get(
+  "/foodItemsDisplay",
+  // checkAuth,
+  upload.single("file"),
+  function (req, res) {
+    kafka.make_request("foodDetails", req.query, function (err, results) {
+      console.log("in result");
+      checkAuth;
+      // upload.single("file");
+      console.log(results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "System Error, Try Again.",
+        });
+      } else {
+        console.log("Inside else");
+        res.status(200).json(results);
+        res.end();
+      }
+    });
+  }
+);
 
-// app.post("/editFoodItems", checkAuth, upload.single("file"), editFoodDishes);
+app.post("/editFoodItems", upload.single("file"), function (req, res) {
+  kafka.make_request("editDish", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
 
-// app.post("/showCustomerProfile", checkAuth, showCustomerProfile);
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
+app.post("/showCustomerProfile", function (req, res) {
+  kafka.make_request("showCustomerProfile", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 // app.post("/getTypeaheadList", checkAuth, getTypeaheadList);
 
 // app.get("/getDeliveryAddress", checkAuth, getDeliveryAddress);
@@ -205,15 +350,91 @@ app.post("/restaurantLoginInfo", function (req, res) {
 
 // app.post("/bookOrder", checkAuth, bookOrder);
 
-// app.post("/updateOrderStatus", checkAuth, updateOrderStatus);
+app.post("/updateOrderStatus", function (req, res) {
+  kafka.make_request("orderStatusUpdate", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
 
-// app.post("/getRestaurantOrders", checkAuth, getRestaurantOrders);
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
-// app.post("/showRestaurantOrderDetails", checkAuth, showRestaurantOrderDetails);
+app.post("/getRestaurantOrders", function (req, res) {
+  kafka.make_request("restaurantOrders", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
+
+app.post("/showRestaurantOrderDetails", function (req, res) {
+  kafka.make_request(
+    "restaurantOrderDetails",
+    req.body,
+    function (err, results) {
+      console.log("in result");
+      checkAuth;
+
+      console.log(results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "System Error, Try Again.",
+        });
+      } else {
+        console.log("Inside else");
+        res.status(200).json(results);
+        res.end();
+      }
+    }
+  );
+});
 
 // app.post("/getPastOrders", checkAuth, getPastOrders);
 
-// app.post("/getReceiptDetails", checkAuth, getReceiptDetails);
+app.post("/getReceiptDetails", function (req, res) {
+  kafka.make_request("receiptDetails", req.body, function (err, results) {
+    console.log("in result");
+    checkAuth;
+
+    console.log(results);
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      console.log("Inside else");
+      res.status(200).json(results);
+      res.end();
+    }
+  });
+});
 
 // app.post("/createNewOrder", checkAuth, createNewOrder);
 

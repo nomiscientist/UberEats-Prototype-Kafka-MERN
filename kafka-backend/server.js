@@ -7,6 +7,18 @@ var connection = new require("./kafka/Connection");
 var LoginCustomer = require("./services/customer/login.js");
 var RegisterCustomer = require("./services/customer/customerSignUpInfo");
 var LoginRestaurant = require("./services/restaurant/restaurantLoginInfo");
+var RegisterRestaurant = require("./services/restaurant/restaurantSignUpInfo");
+var RestaurantDetails = require("./services/restaurant/restaurantDetailsInfo");
+var FoodDetails = require("./services/restaurant/foodItemsDisplay");
+var RestaurantDetailsUpdate = require("./services/restaurant/restaurantDetailsInfoUpdate");
+var AddDish = require("./services/restaurant/addFoodDishes");
+var EditDish = require("./services/restaurant/editFoodDishes");
+var ShowCustomerProfile = require("./services/restaurant/showCustomerProfile");
+var RestaurantOrders = require("./services/restaurant/getRestaurantOrders");
+var RestaurantOrderDetails = require("./services/restaurant/showRestaurantOrderDetails");
+var OrderStatusUpdate = require("./services/restaurant/updateOrderStatus");
+var ReceiptDetails = require("./services/customer/getReceiptDetails");
+var CustomerLocation = require("./services/customer/getCustomerLocation");
 
 var options = {
   useNewUrlParser: true,
@@ -34,7 +46,7 @@ function handleTopicRequest(topic_name, fname) {
     console.log(JSON.stringify(message.value));
     var data = JSON.parse(message.value);
 
-    fname.handle_request(data.data, function (err, res) {
+    fname.handle_request(data.data, (err, res) => {
       console.log("after handle", res);
       var payloads = [
         {
@@ -46,7 +58,7 @@ function handleTopicRequest(topic_name, fname) {
           partition: 0,
         },
       ];
-      console.log("messagegesgsgddgdg", payloads[0].messages);
+      // console.log("messagegesgsgddgdg", payloads[0].messages);
       producer.send(payloads, function (err, data) {
         console.log(data);
       });
@@ -62,3 +74,27 @@ handleTopicRequest("signInCustomer", LoginCustomer);
 handleTopicRequest("registerCustomer", RegisterCustomer);
 
 handleTopicRequest("signInRestaurant", LoginRestaurant);
+
+handleTopicRequest("registerRestaurant", RegisterRestaurant);
+
+handleTopicRequest("restaurantDetails", RestaurantDetails);
+
+handleTopicRequest("foodDetails", FoodDetails);
+
+handleTopicRequest("restaurantDetailsUpdate", RestaurantDetailsUpdate);
+
+handleTopicRequest("addDish", AddDish);
+
+handleTopicRequest("editDish", EditDish);
+
+handleTopicRequest("showCustomerProfile", ShowCustomerProfile);
+
+handleTopicRequest("restaurantOrders", RestaurantOrders);
+
+handleTopicRequest("restaurantOrderDetails", RestaurantOrderDetails);
+
+handleTopicRequest("orderStatusUpdate", OrderStatusUpdate);
+
+handleTopicRequest("receiptDetails", ReceiptDetails);
+
+handleTopicRequest("customerLocation", CustomerLocation);

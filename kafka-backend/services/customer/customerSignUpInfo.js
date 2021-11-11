@@ -6,7 +6,6 @@ const CustomerDetails = require("../../Models/CustomerDetailsModel");
 // const customerSignUpInfo = (req, res) => {
 
 const handle_request = async (registrationDetails, callback) => {
-  console.log("inside?", registrationDetails);
   const CustomerDetail = new CustomerDetailsModel(registrationDetails);
 
   try {
@@ -20,9 +19,7 @@ const handle_request = async (registrationDetails, callback) => {
       callback({ error: "existing email id used!!" }, null);
     } else {
       CustomerDetail.save();
-      // res.send({
-      //   customerId: CustomerDetail._id,
-      // });
+
       callback(null, {
         customerId: CustomerDetail._id,
       });
@@ -32,7 +29,5 @@ const handle_request = async (registrationDetails, callback) => {
     callback({ message: exception }, null);
   }
 };
-
-// module.exports = customerSignUpInfo;
 
 exports.handle_request = handle_request;
