@@ -14,6 +14,21 @@ const Orders = (props) => {
   const [receiptModalShow, setReceiptModalShow] = useState(false);
 
   const [receiptDetails, setReceiptDetails] = useState([]);
+  const [resultsPerPage, setResultsPerPage] = useState(5);
+  const [skip, setSkip] = useState(0);
+
+  let pageOptions = [2, 5, 10];
+
+  const showOptions = () => {
+    let options = pageOptions.map((item) => {
+      return (
+        <option key={item} value={item}>
+          {item}
+        </option>
+      );
+    });
+    return options;
+  };
 
   const getReceiptDetails = async (orderId) => {
     const response = await fetch(
@@ -53,6 +68,12 @@ const Orders = (props) => {
 
   const onChangeHandler = (event) => {
     setOrderFilter(event.target.value);
+    setSkip(0);
+  };
+
+  const onChangeResultsSizeHandler = (event) => {
+    setSkip(0);
+    setResultsPerPage(event.target.value);
   };
 
   const formatTextForOrders = (date, quantity, price) => {
@@ -128,6 +149,8 @@ const Orders = (props) => {
         body: JSON.stringify({
           customerId: session.primaryID,
           orderStatus: orderFilter,
+          skip: skip,
+          take: resultsPerPage,
         }),
       }
     );
@@ -137,14 +160,62 @@ const Orders = (props) => {
     setOrdersList(data);
   };
 
+  const onPrevClickHandler = () => {
+    setSkip((prev) => {
+      return prev - parseInt(resultsPerPage);
+    });
+  };
+
+  const onNextClickHandler = () => {
+    setSkip((prev) => {
+      return prev + parseInt(resultsPerPage);
+    });
+  };
+
   useEffect(() => {
     getPastOrders();
-  }, [orderFilter]);
+  }, [orderFilter, skip, resultsPerPage]);
 
   return (
     <Container fluid className="mt-5">
       <Row>
-        <Col>Past Orders</Col>
+        <Col md={5}>
+          <font size="7">Past Orders</font>
+        </Col>
+        <Col md={2}>
+          <Form.Group required as={Col}>
+            <Form.Label>Results per page</Form.Label>
+            <Form.Control
+              name="quantity"
+              as="select"
+              defaultValue={resultsPerPage}
+              htmlSize={1}
+              // size="sm"
+              custom
+              type="number"
+              onChange={onChangeResultsSizeHandler}
+            >
+              {showOptions()}
+            </Form.Control>
+          </Form.Group>
+        </Col>
+        <Col>
+          <Button
+            variant="outline-dark"
+            disabled={skip === 0}
+            onClick={onPrevClickHandler}
+          >
+            Prev
+          </Button>
+
+          <Button
+            disabled={ordersList.length === 0}
+            variant="outline-dark"
+            onClick={onNextClickHandler}
+          >
+            Next
+          </Button>
+        </Col>
         <Col>
           <Form>
             <Form.Group as={Col}>

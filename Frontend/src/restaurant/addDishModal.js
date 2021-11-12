@@ -2,10 +2,19 @@ import React, { useState } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 import { getSessionCookie } from "../common/session";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { reduxConstants } from "../constants/reduxConstants.js";
 
 const AddDishModal = (props) => {
-  let onClickValue = props.show;
-  let onHideValue = props.onHide;
+  const dispatch = useDispatch();
+
+  let onClickValue = useSelector(
+    (state) => state.restaurantDetails.addDishModalShow
+  );
+
+  const reduxFunc = (value) => {
+    dispatch({ type: reduxConstants.ADD_DISH_MODAL_SHOW, value });
+  };
 
   const [addDishValues, setAddDishValues] = useState({});
   const session = getSessionCookie();
@@ -73,7 +82,7 @@ const AddDishModal = (props) => {
 
       const data = await response.json();
 
-      props.onHide();
+      reduxFunc(false);
       props.getDishesHandler();
       setAddDishValues({});
     } catch (error) {
@@ -84,7 +93,7 @@ const AddDishModal = (props) => {
   return (
     <Modal
       show={onClickValue}
-      onHide={onHideValue}
+      onHide={() => reduxFunc(false)}
       aria-labelledby="contained-modal-title-vcenter"
     >
       <Form onSubmit={submitDishesHandler}>

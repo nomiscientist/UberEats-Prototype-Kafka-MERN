@@ -14,11 +14,14 @@ import { useHistory } from "react-router-dom";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import { useLocation } from "react-router-dom";
 import { IoLocation } from "react-icons/io5";
+import { reduxConstants } from "../constants/reduxConstants.js";
 
 const RestaurantDetails = (props) => {
+  const dispatch = useDispatch();
   let imageUrl = Holder;
 
-  const [modalShow, setModalShow] = useState(false);
+  // const [modalShow, setModalShow] = useState(false);
+
   const [restaurantModalShow, setRestaurantModalShow] = useState(false);
   const [profilePicture, setProfilePicture] = useState({});
   const [restaurantDetails, setRestaurantDetails] = useState({});
@@ -198,16 +201,27 @@ const RestaurantDetails = (props) => {
         </>
       );
   };
+
+  const reduxFunc = (value) => {
+    dispatch({ type: reduxConstants.ADD_DISH_MODAL_SHOW, value });
+  };
+
   const addDishButton = () => {
     if (session.restaurantFlag)
       return (
         <>
-          <Button size="sm" variant="dark" onClick={() => setModalShow(true)}>
+          <Button
+            size="sm"
+            variant="dark"
+            onClick={() => {
+              reduxFunc(true);
+            }}
+          >
             Add Dishes
           </Button>
           <AddDishModal
-            show={modalShow}
-            onHide={() => setModalShow(false)}
+            // show={modalShow}
+            // onHide={() => setModalShow(false)}
             getDishesHandler={getDishesHandler}
           />
         </>

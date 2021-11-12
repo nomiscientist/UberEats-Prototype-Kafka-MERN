@@ -11,18 +11,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1026.0",
     "axios": "^0.21.4",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "kafka-node": "^5.0.0",
+    "kafkajs": "^1.15.0",
     "mongodb": "^4.1.2",
     "mongoose": "^6.0.10",
     "multer": "^1.4.3",
+    "multer-s3": "^2.10.0",
     "mysql": "^2.18.1",
     "passport": "^0.5.0",
-    "passport-jwt": "^4.0.0",
-    "kafka-node": "^5.0.0",
-    "kafkajs": "^1.15.0"
+    "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^4.3.4",

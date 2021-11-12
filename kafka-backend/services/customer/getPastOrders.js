@@ -3,19 +3,31 @@ const RestaurantDetails = require("../../Models/RestaurantDetailsModel");
 
 const handle_request = async (orderDetails, callback) => {
   let order;
-
+  let skip, limit;
   try {
+    console.log("limit n all", orderDetails.take, orderDetails.skip);
+
+    limit = parseInt(orderDetails.take);
+    skip = parseInt(orderDetails.skip);
+
     if (orderDetails.orderStatus.length === 0) {
       order = await Orders.find({
         customerId: orderDetails.customerId,
-      }).exec();
+      })
+        .limit(limit)
+        .skip(skip)
+        .exec();
     } else {
       order = await Orders.find({
         customerId: orderDetails.customerId,
         finalStatus: orderDetails.orderStatus,
-      }).exec();
+      })
+        .limit(limit)
+        .skip(skip)
+        .exec();
     }
 
+    //-----------------------------------------------------------------------------
     if (order) {
       let listOfRestaurantIds = order.map((element) => {
         return element.restaurantId;

@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const multer = require("multer");
+
 const kafka = require("./kafka/client");
 
 // const Router = require("./routes");
@@ -12,9 +12,36 @@ const { checkAuth } = require("./Controller/Common/passport");
 const { auth } = require("./Controller/Common/passport");
 
 const app = express();
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
+
+const s3 = new AWS.S3({
+  accessKeyId: "AKIAZJZS76WTOJJJGHU3",
+  secretAccessKey: "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",
+});
+
 app.use(express.json());
 app.use(cors());
 app.use(passport.initialize());
+
+const uploadS3 = multer({
+  storage: multerS3({
+    s3: s3,
+    acl: "public-read",
+    bucket: "bucket-name",
+    metadata: (req, file, cb) => {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: (req, file, cb) => {
+      cb(null, Date.now().toString() + "-" + file.originalname);
+    },
+  }),
+});
+
+app.post("/upload", uploadS3.single("file"), (req, res) => {
+  console.log(req.file);
+});
 
 app.use(
   bodyParser.urlencoded({
@@ -37,6 +64,7 @@ const storage = multer.diskStorage({
 auth();
 var upload = multer({ storage: storage });
 
+//------------------------------------------------------------------------------
 app.post("/customerSignIn", function (req, res) {
   kafka.make_request("signInCustomer", req.body, function (err, results) {
     console.log("in result");

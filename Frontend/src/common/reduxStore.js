@@ -5,6 +5,7 @@ import { registration } from "../reducers/registerReducer";
 import { alert } from "../reducers/alertReducer";
 import { order } from "../reducers/orderReducer";
 import { mainHeader } from "../reducers/mainHeaderReducer";
+import { restaurantDetails } from "../reducers/restaurantDetailsReducer";
 
 const rootReducer = combineReducers({
   authentication,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   alert,
   order,
   mainHeader,
+  restaurantDetails,
 });
 
 export const store = createStore(
