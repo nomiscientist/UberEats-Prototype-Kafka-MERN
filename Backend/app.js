@@ -29,7 +29,7 @@ const uploadS3 = multer({
   storage: multerS3({
     s3: s3,
     acl: "public-read",
-    bucket: "bucket-name",
+    bucket: "ubereatsimages-273",
     metadata: (req, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },
@@ -37,10 +37,6 @@ const uploadS3 = multer({
       cb(null, Date.now().toString() + "-" + file.originalname);
     },
   }),
-});
-
-app.post("/upload", uploadS3.single("file"), (req, res) => {
-  console.log(req.file);
 });
 
 app.use(
@@ -176,7 +172,15 @@ app.post("/getCustomerLocation", function (req, res) {
   });
 });
 
-app.post("/updateProfileInfo", upload.single("file"), function (req, res) {
+// app.post("/upload", uploadS3.single("file"), (req, res) => {
+//   console.log(req.file);
+// });
+
+app.post("/updateProfileInfo", uploadS3.single("file"), function (req, res) {
+  console.log("S3 file contents", req.file);
+  req.body.image = req.file.location;
+  console.log("printing body", req.body);
+  console.log("************");
   kafka.make_request("updateProfileInfo", req.body, function (err, results) {
     console.log("in result");
     checkAuth;
@@ -199,12 +203,14 @@ app.post("/updateProfileInfo", upload.single("file"), function (req, res) {
 app.get(
   "/restaurantDetailsInfo",
   // checkAuth,
-  // upload.single("file"),
+  // uploadS3.single("file"),
   function (req, res) {
+    // req.query.image = req.file.location;
     kafka.make_request("restaurantDetails", req.query, function (err, results) {
       console.log("in result");
+      //TODO ye do neeche kya kia hai samajjh ni aya
       checkAuth;
-      upload.single("file");
+      // upload.single("file");
       console.log(results);
       if (err) {
         console.log("Inside err");
@@ -224,16 +230,17 @@ app.get(
 app.post(
   "/restaurantDetailsInfoUpdate",
   // checkAuth,
-  upload.single("file"),
+  uploadS3.single("file"),
   function (req, res) {
     console.log("req.body", req.body);
+    req.body.image = req.file.location;
     kafka.make_request(
       "restaurantDetailsUpdate",
       req.body,
       function (err, results) {
         console.log("in result");
         checkAuth;
-        upload.single("file");
+        // upload.single("file");
         console.log(results);
         if (err) {
           console.log("Inside err");
@@ -274,8 +281,9 @@ app.post("/addFoodItems", upload.single("file"), function (req, res) {
 app.get(
   "/foodItemsDisplay",
   // checkAuth,
-  upload.single("file"),
+  // uploadS3.single("file"),
   function (req, res) {
+    // req.query.image = req.file.location;
     kafka.make_request("foodDetails", req.query, function (err, results) {
       console.log("in result");
       checkAuth;
@@ -296,7 +304,8 @@ app.get(
   }
 );
 
-app.post("/editFoodItems", upload.single("file"), function (req, res) {
+app.post("/editFoodItems", uploadS3.single("file"), function (req, res) {
+  req.body.image = req.file.location;
   kafka.make_request("editDish", req.body, function (err, results) {
     console.log("in result");
     checkAuth;

@@ -11,6 +11,7 @@ const deliveryTypeOptions = [
   "Preparing",
   "On the way",
   "Delivered",
+  "Cancelled",
 ];
 const pickupTypeOptions = [
   "",
@@ -18,6 +19,7 @@ const pickupTypeOptions = [
   "Preparing",
   "Pick up Ready",
   "Picked up",
+  "Cancelled",
 ];
 
 const orderFilterOptions = ["", "New Order", "Delivered", "Cancelled"];

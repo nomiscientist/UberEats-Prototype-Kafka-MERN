@@ -14,7 +14,7 @@ const handle_request = async (restaurantDetails, callback) => {
       deliveryFlag: restaurantDetails.deliveryFlag,
       pickupFlag: restaurantDetails.pickupFlag,
       about: restaurantDetails.about,
-      image: restaurantDetails.file?.filename,
+      image: restaurantDetails.image,
       city: restaurantDetails.city,
       state: restaurantDetails.state,
       zipCode: restaurantDetails.zipCode,

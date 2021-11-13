@@ -80,7 +80,8 @@ const RestaurantDetails = (props) => {
       setProfilePicture((prevState) => {
         return {
           ...prevState,
-          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+          // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+          imagePreview: data.image,
         };
       });
     }
@@ -105,7 +106,8 @@ const RestaurantDetails = (props) => {
       data.map((dataRow) => {
         return {
           ...dataRow,
-          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + dataRow.image,
+          // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + dataRow.image,
+          imagePreview: dataRow.image,
           show: false,
         };
       })

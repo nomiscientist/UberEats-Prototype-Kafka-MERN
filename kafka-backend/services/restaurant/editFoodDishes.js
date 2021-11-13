@@ -21,7 +21,7 @@ const handle_request = async (foodDetails, callback) => {
       dishCategory: foodDetails.dishCategory,
       mainIngredients: foodDetails.ingredients,
       cuisine: foodDetails.cuisine,
-      image: foodDetails.file?.filename,
+      image: foodDetails.image,
     };
 
     let restaurantDish = await RestaurantDishes.findOneAndUpdate(

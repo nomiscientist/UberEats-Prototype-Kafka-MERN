@@ -4,6 +4,7 @@ const handle_request = async (orderDetails, callback) => {
   let ts = Date.now();
   let date_ob = new Date(ts);
   try {
+    console.log("aaj ka order **********", orderDetails);
     let order = await Orders.findOne({
       customerId: orderDetails.customerId,
       finalStatus: "New",
@@ -13,6 +14,7 @@ const handle_request = async (orderDetails, callback) => {
       Orders.updateOne(order, {
         totalPrice: orderDetails.totalPrice,
         totalQuantity: orderDetails.totalItems,
+        specialInstructions: orderDetails.specialInstructions,
         dateOrdered: date_ob,
         finalStatus: "New Order",
       }).exec();

@@ -5,7 +5,7 @@ const ReceiptModal = (props) => {
   const displayReceiptDetails = () => {
     return props.receiptDetails.map((dishItem, key) => {
       return (
-        <Row key = {key}>
+        <Row key={key}>
           <Col>{dishItem.quantity}</Col>
           <Col>{dishItem.foodName}</Col>
           <Col>${dishItem.price}</Col>
@@ -24,6 +24,12 @@ const ReceiptModal = (props) => {
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           {props.header}
+          <Row>
+            <font size="3">
+              {" "}
+              Special Instructions : {props.specialInstructions}
+            </font>
+          </Row>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body variant="dark">

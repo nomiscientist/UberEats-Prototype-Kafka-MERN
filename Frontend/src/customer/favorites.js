@@ -16,7 +16,8 @@ const Favorites = (props) => {
       return {
         ...d,
         isLiked: true,
-        imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
+        imagePreview: d.image,
+        // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
       };
     });
     console.log("restList", restList);

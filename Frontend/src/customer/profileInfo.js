@@ -134,7 +134,8 @@ const ProfileInfo = (props) => {
 
       if (data.image) {
         customerImageObject = {
-          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+          // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+          imagePreview: data.image,
         };
       } else {
         customerImageObject = {

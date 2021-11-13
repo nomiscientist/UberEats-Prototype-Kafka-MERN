@@ -26,6 +26,7 @@ const handle_request = async (orderStatus, callback) => {
           orderStatus: result.finalStatus,
           customerId: result.customerId,
           deliveryOrPickup: result.deliveryOrPickup,
+          specialInstructions: " ",
         });
       }
     }

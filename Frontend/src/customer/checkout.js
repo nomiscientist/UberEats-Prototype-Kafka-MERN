@@ -22,6 +22,7 @@ const Checkout = () => {
   const [show, setShow] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [newSelectedAddress, setNewSelectedAddress] = useState("");
+  const [instruction, setInstruction] = useState("");
 
   const [deliveryType, setDeliveryType] = useState("delivery");
 
@@ -113,6 +114,10 @@ const Checkout = () => {
     setTip(tipValue * subTotal);
   };
 
+  const onInstructionChangeHandler = (event) => {
+    event.preventDefault();
+    setInstruction(event.target.value);
+  };
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     if (
@@ -132,6 +137,7 @@ const Checkout = () => {
               customerId: session.primaryID,
               totalPrice: subTotal + tip + tax + deliveryFee,
               totalItems: totalItems,
+              specialInstructions: instruction,
             }),
           }
         );
@@ -278,9 +284,18 @@ const Checkout = () => {
               </Card.Header>
               <Card.Body className="mt-3">
                 <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>Add special Instructions</Form.Label>
+                    <Form.Control
+                      name="specialInstructions"
+                      onChange={onInstructionChangeHandler}
+                    ></Form.Control>
+                  </Form.Group>
+                </Row>
+                <Row>
                   <Col>Subtotal</Col>
                   <Col></Col>
-                  <Col>${subTotal.toFixed(2)}</Col>
+                  <Col>${subTotal?.toFixed(2)}</Col>
                 </Row>
                 <Row>
                   <Col> Delivery Fee</Col>

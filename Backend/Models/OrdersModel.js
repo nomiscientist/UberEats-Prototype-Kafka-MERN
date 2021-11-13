@@ -11,6 +11,7 @@ var OrdersSchema = new Schema(
     dateOrdered: { type: Date, required: false },
     deliveryOrPickup: { type: String, required: false },
     finalStatus: { type: String, required: false },
+    specialInstructions: { type: String, required: false },
   },
   {
     versionKey: false,

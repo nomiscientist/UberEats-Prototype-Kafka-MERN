@@ -23,7 +23,7 @@ const handle_request = async (profileDetails, callback) => {
           nickname: profileDetails.nickname,
           dateOfBirth: profileDetails.dateOfBirth,
           about: profileDetails.about,
-          image: profileDetails.file?.filename,
+          image: profileDetails?.image,
         },
         (error, customerDetail) => {
           if (error) {

@@ -57,6 +57,7 @@ const Orders = (props) => {
     "Delivered",
     "Pick up Ready",
     "Picked up",
+    "Cancelled",
   ];
   const options = orderFilterOptions.map((item) => {
     return (
@@ -93,6 +94,27 @@ const Orders = (props) => {
     getReceiptDetails(orderId);
   };
 
+  const onClickCancelHandler = async (orderId) => {
+    const response = await fetch(
+      `http://${NODE_HOST}:${NODE_PORT}/updateOrderStatus`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session.token,
+        },
+        body: JSON.stringify({
+          orderId: orderId,
+          orderStatus: "Cancelled",
+        }),
+      }
+    );
+    const data = await response.json();
+    getPastOrders();
+    // console.log("setOrdersList", data);
+    //setOrdersList(data);
+  };
+
   const displayOrders = () => {
     return ordersList?.length > 0 ? (
       ordersList.map((pastOrder) => {
@@ -101,7 +123,15 @@ const Orders = (props) => {
             {" "}
             <ListGroup.Item>
               <Col>
-                <h5>{pastOrder.restaurantName}</h5>
+                <h4>{pastOrder.restaurantName}</h4>
+                <h6>Order Status: {pastOrder.finalStatus}</h6>
+                <Button
+                  variant="success"
+                  disabled={pastOrder.finalStatus !== "New Order"}
+                  onClick={() => onClickCancelHandler(pastOrder._id)}
+                >
+                  Cancel Order
+                </Button>
               </Col>
               <Col>
                 {formatTextForOrders(
@@ -121,6 +151,7 @@ const Orders = (props) => {
               </Col>
               <ReceiptModal
                 receiptModalShow={receiptModalShow}
+                specialInstructions={pastOrder.specialInstructions}
                 onHide={() => setReceiptModalShow(false)}
                 receiptDetails={receiptDetails}
                 header={"Receipt"}
@@ -137,7 +168,6 @@ const Orders = (props) => {
   };
 
   const getPastOrders = async () => {
-    console.log("Hi");
     const response = await fetch(
       `http://${NODE_HOST}:${NODE_PORT}/getPastOrders`,
       {
@@ -190,7 +220,6 @@ const Orders = (props) => {
               as="select"
               defaultValue={resultsPerPage}
               htmlSize={1}
-              // size="sm"
               custom
               type="number"
               onChange={onChangeResultsSizeHandler}
