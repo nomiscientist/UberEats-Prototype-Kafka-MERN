@@ -3,7 +3,7 @@ const OrderDetails = require("../../Models/OrderDetailsModel");
 
 const handle_request = async (customerDetails, callback) => {
   let customerId = customerDetails.customerId;
-  console.log("customerDetails", customerDetails);
+
   try {
     let order = await Orders.findOne({
       customerId: customerId,
@@ -11,7 +11,6 @@ const handle_request = async (customerDetails, callback) => {
     }).exec();
 
     if (order) {
-      console.log("heloo");
       let orderId = order._id;
       await OrderDetails.deleteMany({
         orderId: orderId,
@@ -39,7 +38,6 @@ const handle_request = async (customerDetails, callback) => {
       });
     }
   } catch (exception) {
-    console.log("error kya?", exception);
     callback({ message: exception }, null);
   }
 };

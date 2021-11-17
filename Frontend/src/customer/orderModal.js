@@ -160,7 +160,6 @@ const OrderModal = (props) => {
       (cartDetail && cartDetail.restaurantId === cartRestaurantDetails[0])
     ) {
       try {
-        console.log("cartDetail", cartDetail);
         const response = await fetch(
           `http://${NODE_HOST}:${NODE_PORT}/addOrdertoCart`,
           {

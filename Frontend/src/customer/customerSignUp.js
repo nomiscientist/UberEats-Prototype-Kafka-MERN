@@ -96,7 +96,6 @@ const CustomerSignUp = (props) => {
       );
 
       const data = await response.json();
-      console.log("Data mila", data);
 
       if (data.error === "existing email id used!!") {
         alert(

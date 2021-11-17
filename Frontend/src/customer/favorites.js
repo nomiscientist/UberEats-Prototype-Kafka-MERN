@@ -17,10 +17,9 @@ const Favorites = (props) => {
         ...d,
         isLiked: true,
         imagePreview: d.image,
-        // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + d.image,
       };
     });
-    console.log("restList", restList);
+
     dispatch({ type: reduxConstants.RESTAURANT_LIST, restList });
   };
 

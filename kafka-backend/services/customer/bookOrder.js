@@ -4,7 +4,6 @@ const handle_request = async (orderDetails, callback) => {
   let ts = Date.now();
   let date_ob = new Date(ts);
   try {
-    console.log("aaj ka order **********", orderDetails);
     let order = await Orders.findOne({
       customerId: orderDetails.customerId,
       finalStatus: "New",

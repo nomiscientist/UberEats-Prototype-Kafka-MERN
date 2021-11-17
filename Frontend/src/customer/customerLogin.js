@@ -57,14 +57,12 @@ const CustomerLogin = (props) => {
         }
       );
       const data = await response.json();
-      //token received
-      console.log("data", data.token);
 
       if (response.status === 200) {
         let token = data.token;
 
         var decoded = jwt_decode(data.token.split(" ")[1]);
-        console.log("decoded", decoded);
+
         setSessionCookie(
           JSON.stringify({
             primaryID: decoded.customerID,

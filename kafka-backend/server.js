@@ -74,7 +74,7 @@ function handleTopicRequest(topic_name, fname) {
           partition: 0,
         },
       ];
-      // console.log("messagegesgsgddgdg", payloads[0].messages);
+
       producer.send(payloads, function (err, data) {
         console.log(data);
       });

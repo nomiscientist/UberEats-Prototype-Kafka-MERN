@@ -90,10 +90,10 @@ const handle_request = async (listDetails, callback) => {
     ) {
       let restaurantIdList = [];
 
-      console.log("listDetails.typeaheadValue ", listDetails.typeaheadValue);
       if (listDetails.deliveryType === "pickup") {
         restaurantDetail = await RestaurantDetails.find({
           pickupFlag: "Yes",
+          _id: { $in: listDetails.typeaheadValue },
         }).exec();
 
         restaurantDetail.forEach((v) => {
@@ -102,7 +102,7 @@ const handle_request = async (listDetails, callback) => {
       } else {
         restaurantDetail = await RestaurantDetails.find({
           deliveryFlag: "Yes",
-          // restaurantId: { $in: listDetails.typeaheadValue },
+          _id: { $in: listDetails.typeaheadValue },
         }).exec();
 
         restaurantDetail.forEach((v) => {
@@ -130,7 +130,6 @@ const handle_request = async (listDetails, callback) => {
 
       orderOfRestaurants = sortListOfRestaurants(newList, customerLocation);
 
-      console.log("orderOfRestaurants", orderOfRestaurants);
       callback(null, orderOfRestaurants);
     }
   } catch (exception) {

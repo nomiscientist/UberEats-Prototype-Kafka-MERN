@@ -111,8 +111,6 @@ const Orders = (props) => {
     );
     const data = await response.json();
     getPastOrders();
-    // console.log("setOrdersList", data);
-    //setOrdersList(data);
   };
 
   const displayOrders = () => {
@@ -185,7 +183,6 @@ const Orders = (props) => {
       }
     );
     const data = await response.json();
-    console.log("setOrdersList", data);
 
     setOrdersList(data);
   };

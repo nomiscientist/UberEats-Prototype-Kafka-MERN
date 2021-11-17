@@ -5,8 +5,6 @@ const handle_request = async (orderDetails, callback) => {
   let order;
   let skip, limit;
   try {
-    console.log("limit n all", orderDetails.take, orderDetails.skip);
-
     limit = parseInt(orderDetails.take);
     skip = parseInt(orderDetails.skip);
 

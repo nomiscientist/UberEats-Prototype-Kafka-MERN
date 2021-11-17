@@ -134,10 +134,6 @@ const MainHeader = (props) => {
 
       let data = await response.json();
 
-      // setTypeaheadOutput(() => {
-      //   return data;
-      // });
-      console.log("typeahead output", data);
       dispatch({ type: reduxConstants.TYPEAHEAD_OUTPUT, data });
     } catch (error) {
       console.log(error);

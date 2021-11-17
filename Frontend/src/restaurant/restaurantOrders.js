@@ -171,7 +171,6 @@ const RestaurantOrders = () => {
   };
 
   const getCustomerDetails = async (customerId) => {
-    console.log("getcustomerdetails", customerId);
     const response = await fetch(
       `http://${NODE_HOST}:${NODE_PORT}/showCustomerProfile`,
       {
@@ -223,7 +222,7 @@ const RestaurantOrders = () => {
                     variant="success"
                     onClick={() => updateDeliveryStatus(order._id)}
                   >
-                    Update Delivery status
+                    Update status
                   </Button>
                   <Form.Control
                     name="deliveryStatusSelected"
