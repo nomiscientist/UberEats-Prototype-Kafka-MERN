@@ -23,7 +23,7 @@ function auth() {
           if (err) {
             return callback(err, false);
           }
-          console.log("yahan");
+
           if (results) {
             console.log("results", results);
             callback(null, results);

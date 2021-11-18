@@ -3,12 +3,7 @@ function ConnectionProvider() {
   this.getConsumer = function (topic_name) {
     // if (!this.kafkaConsumerConnection) {
     this.client = new kafka.KafkaClient(`3.21.34.141:2181`);
-    //this.client = new kafka.Client("localhost:2181");
-    /*this.client.refreshMetadata([{topic: topic_name}], (err) => {
-                if (err) {
-                    console.warn('Error refreshing kafka metadata', err);
-                }
-            });*/
+
     this.kafkaConsumerConnection = new kafka.Consumer(this.client, [
       { topic: topic_name, partition: 0 },
     ]);
@@ -23,11 +18,7 @@ function ConnectionProvider() {
   this.getProducer = function () {
     if (!this.kafkaProducerConnection) {
       this.client = new kafka.KafkaClient(`3.21.34.141:2181`);
-      /*this.client.refreshMetadata([{topic: topic_name}], (err) => {
-                if (err) {
-                    console.warn('Error refreshing kafka metadata', err);
-                }
-            });*/
+
       var HighLevelProducer = kafka.HighLevelProducer;
       this.kafkaProducerConnection = new HighLevelProducer(this.client);
       //this.kafkaConnection = new kafka.Producer(this.client);

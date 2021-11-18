@@ -1,0 +1,63 @@
+bin/kafka-topics.sh --create --topic signInCustomer --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic responseTopic --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic registerCustomer --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic signInRestaurant --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic registerRestaurant --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic restaurantDetails --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic foodDetails --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic restaurantDetailsUpdate --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic addDish --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic editDish --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic showCustomerProfile --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic restaurantOrders --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic restaurantOrderDetails --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic orderStatusUpdate --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic receiptDetails --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic customerLocation --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic profileInfo --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic updateProfileInfo --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic deliveryAddress --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic deliveryType --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic addDeliveryAddress --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic bookorder --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic orderTotal --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic pastOrders --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic cartDetails --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic favoriteRestaurant --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic createFavorite --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic updateCartDetails --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic newOrder --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic listOfRestaurants --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic addOrdertoCart --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092
+
+bin/kafka-topics.sh --create --topic typeaheadList --partitions 1  --replication-factor 1 --bootstrap-server localhost:9092

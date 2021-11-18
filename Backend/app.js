@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const { mongoDB } = require("./Controller/Common/config");
+const mongoose = require("mongoose");
 
 const kafka = require("./kafka/client");
 
@@ -24,6 +26,22 @@ const s3 = new AWS.S3({
 app.use(express.json());
 app.use(cors());
 app.use(passport.initialize());
+
+var options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  // maxPoolSize: 500,
+  wtimeoutMS: 2500,
+};
+
+mongoose.connect(mongoDB, options, (err, res) => {
+  if (err) {
+    console.log(err);
+    console.log("MongoDB connection failed");
+  } else {
+    console.log("MongoDB connected!!");
+  }
+});
 
 const uploadS3 = multer({
   storage: multerS3({
@@ -133,10 +151,9 @@ app.post("/restaurantSignUpInfo", function (req, res) {
   });
 });
 
-app.get("/getProfileInfo", function (req, res) {
+app.get("/getProfileInfo", checkAuth, function (req, res) {
   kafka.make_request("profileInfo", req.query, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -152,10 +169,9 @@ app.get("/getProfileInfo", function (req, res) {
   });
 });
 
-app.post("/getCustomerLocation", function (req, res) {
+app.post("/getCustomerLocation", checkAuth, function (req, res) {
   kafka.make_request("customerLocation", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -171,33 +187,34 @@ app.post("/getCustomerLocation", function (req, res) {
   });
 });
 
-app.post("/updateProfileInfo", uploadS3.single("file"), function (req, res) {
-  console.log("S3 file contents", req.file);
-  req.body.image = req.file?.location;
-  console.log("printing body", req.body);
-  console.log("************");
-  kafka.make_request("updateProfileInfo", req.body, function (err, results) {
-    console.log("in result");
-    checkAuth;
-    console.log(results);
-    if (err) {
-      console.log("Inside err");
-      res.json({
-        status: "error",
-        msg: "System Error, Try Again.",
-      });
-    } else {
-      console.log("Inside else");
-      res.status(200).json(results);
-      res.end();
-    }
-  });
-});
+app.post(
+  "/updateProfileInfo",
+  checkAuth,
+  uploadS3.single("file"),
+  function (req, res) {
+    console.log("S3 file contents", req.file);
+    req.body.image = req.file?.location;
+    kafka.make_request("updateProfileInfo", req.body, function (err, results) {
+      console.log("in result");
+      console.log(results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "System Error, Try Again.",
+        });
+      } else {
+        console.log("Inside else");
+        res.status(200).json(results);
+        res.end();
+      }
+    });
+  }
+);
 
-app.get("/restaurantDetailsInfo", function (req, res) {
+app.get("/restaurantDetailsInfo", checkAuth, function (req, res) {
   kafka.make_request("restaurantDetails", req.query, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -215,6 +232,7 @@ app.get("/restaurantDetailsInfo", function (req, res) {
 
 app.post(
   "/restaurantDetailsInfoUpdate",
+  checkAuth,
   uploadS3.single("file"),
   function (req, res) {
     console.log("req.body", req.body);
@@ -224,7 +242,6 @@ app.post(
       req.body,
       function (err, results) {
         console.log("in result");
-        checkAuth;
         console.log(results);
         if (err) {
           console.log("Inside err");
@@ -242,31 +259,34 @@ app.post(
   }
 );
 
-app.post("/addFoodItems", uploadS3.single("file"), function (req, res) {
-  console.log("req.body", req.body);
-  req.body.image = req.file?.location;
-  kafka.make_request("addDish", req.body, function (err, results) {
-    console.log("in result");
-    checkAuth;
-    console.log(results);
-    if (err) {
-      console.log("Inside err");
-      res.json({
-        status: "error",
-        msg: "System Error, Try Again.",
-      });
-    } else {
-      console.log("Inside else");
-      res.status(200).json(results);
-      res.end();
-    }
-  });
-});
+app.post(
+  "/addFoodItems",
+  checkAuth,
+  uploadS3.single("file"),
+  function (req, res) {
+    console.log("req.body", req.body);
+    req.body.image = req.file?.location;
+    kafka.make_request("addDish", req.body, function (err, results) {
+      console.log("in result");
+      console.log(results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "System Error, Try Again.",
+        });
+      } else {
+        console.log("Inside else");
+        res.status(200).json(results);
+        res.end();
+      }
+    });
+  }
+);
 
-app.get("/foodItemsDisplay", function (req, res) {
+app.get("/foodItemsDisplay", checkAuth, function (req, res) {
   kafka.make_request("foodDetails", req.query, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -282,30 +302,33 @@ app.get("/foodItemsDisplay", function (req, res) {
   });
 });
 
-app.post("/editFoodItems", uploadS3.single("file"), function (req, res) {
-  req.body.image = req.file.location;
-  kafka.make_request("editDish", req.body, function (err, results) {
-    console.log("in result");
-    checkAuth;
-    console.log(results);
-    if (err) {
-      console.log("Inside err");
-      res.json({
-        status: "error",
-        msg: "System Error, Try Again.",
-      });
-    } else {
-      console.log("Inside else");
-      res.status(200).json(results);
-      res.end();
-    }
-  });
-});
+app.post(
+  "/editFoodItems",
+  checkAuth,
+  uploadS3.single("file"),
+  function (req, res) {
+    req.body.image = req.file.location;
+    kafka.make_request("editDish", req.body, function (err, results) {
+      console.log("in result");
+      console.log(results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "System Error, Try Again.",
+        });
+      } else {
+        console.log("Inside else");
+        res.status(200).json(results);
+        res.end();
+      }
+    });
+  }
+);
 
-app.post("/showCustomerProfile", function (req, res) {
+app.post("/showCustomerProfile", checkAuth, function (req, res) {
   kafka.make_request("showCustomerProfile", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -321,10 +344,9 @@ app.post("/showCustomerProfile", function (req, res) {
   });
 });
 
-app.post("/getTypeaheadList", function (req, res) {
+app.post("/getTypeaheadList", checkAuth, function (req, res) {
   kafka.make_request("typeaheadList", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -340,10 +362,9 @@ app.post("/getTypeaheadList", function (req, res) {
   });
 });
 
-app.get("/getDeliveryAddress", function (req, res) {
+app.get("/getDeliveryAddress", checkAuth, function (req, res) {
   kafka.make_request("deliveryAddress", req.query, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -359,10 +380,9 @@ app.get("/getDeliveryAddress", function (req, res) {
   });
 });
 
-app.post("/getListOfRestaurants", function (req, res) {
+app.post("/getListOfRestaurants", checkAuth, function (req, res) {
   kafka.make_request("listOfRestaurants", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -378,10 +398,9 @@ app.post("/getListOfRestaurants", function (req, res) {
   });
 });
 
-app.post("/createFavouritesList", function (req, res) {
+app.post("/createFavouritesList", checkAuth, function (req, res) {
   kafka.make_request("createFavorite", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -396,10 +415,9 @@ app.post("/createFavouritesList", function (req, res) {
     }
   });
 });
-app.post("/getFavoriteRestaurants", function (req, res) {
+app.post("/getFavoriteRestaurants", checkAuth, function (req, res) {
   kafka.make_request("favoriteRestaurant", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -415,10 +433,9 @@ app.post("/getFavoriteRestaurants", function (req, res) {
   });
 });
 
-app.post("/addOrdertoCart", function (req, res) {
+app.post("/addOrdertoCart", checkAuth, function (req, res) {
   kafka.make_request("addOrdertoCart", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -434,10 +451,9 @@ app.post("/addOrdertoCart", function (req, res) {
   });
 });
 
-app.post("/showCartDetails", function (req, res) {
+app.post("/showCartDetails", checkAuth, function (req, res) {
   kafka.make_request("cartDetails", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -452,11 +468,9 @@ app.post("/showCartDetails", function (req, res) {
     }
   });
 });
-app.post("/updateCartOrderDetails", function (req, res) {
+app.post("/updateCartOrderDetails", checkAuth, function (req, res) {
   kafka.make_request("updateCartDetails", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -472,11 +486,9 @@ app.post("/updateCartOrderDetails", function (req, res) {
   });
 });
 
-app.get("/getOrderTotal", function (req, res) {
+app.get("/getOrderTotal", checkAuth, function (req, res) {
   kafka.make_request("orderTotal", req.query, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -492,11 +504,9 @@ app.get("/getOrderTotal", function (req, res) {
   });
 });
 
-app.get("/getDeliveryType", function (req, res) {
+app.get("/getDeliveryType", checkAuth, function (req, res) {
   kafka.make_request("deliveryType", req.query, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -512,11 +522,9 @@ app.get("/getDeliveryType", function (req, res) {
   });
 });
 
-app.post("/addDeliveryAddress", function (req, res) {
+app.post("/addDeliveryAddress", checkAuth, function (req, res) {
   kafka.make_request("addDeliveryAddress", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -532,11 +540,9 @@ app.post("/addDeliveryAddress", function (req, res) {
   });
 });
 
-app.post("/bookOrder", function (req, res) {
+app.post("/bookOrder", checkAuth, function (req, res) {
   kafka.make_request("bookorder", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -552,11 +558,9 @@ app.post("/bookOrder", function (req, res) {
   });
 });
 
-app.post("/updateOrderStatus", function (req, res) {
+app.post("/updateOrderStatus", checkAuth, function (req, res) {
   kafka.make_request("orderStatusUpdate", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -572,11 +576,9 @@ app.post("/updateOrderStatus", function (req, res) {
   });
 });
 
-app.post("/getRestaurantOrders", function (req, res) {
+app.post("/getRestaurantOrders", checkAuth, function (req, res) {
   kafka.make_request("restaurantOrders", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -592,14 +594,12 @@ app.post("/getRestaurantOrders", function (req, res) {
   });
 });
 
-app.post("/showRestaurantOrderDetails", function (req, res) {
+app.post("/showRestaurantOrderDetails", checkAuth, function (req, res) {
   kafka.make_request(
     "restaurantOrderDetails",
     req.body,
     function (err, results) {
       console.log("in result");
-      checkAuth;
-
       console.log(results);
       if (err) {
         console.log("Inside err");
@@ -616,11 +616,9 @@ app.post("/showRestaurantOrderDetails", function (req, res) {
   );
 });
 
-app.post("/getPastOrders", function (req, res) {
+app.post("/getPastOrders", checkAuth, function (req, res) {
   kafka.make_request("pastOrders", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -636,11 +634,9 @@ app.post("/getPastOrders", function (req, res) {
   });
 });
 
-app.post("/getReceiptDetails", function (req, res) {
+app.post("/getReceiptDetails", checkAuth, function (req, res) {
   kafka.make_request("receiptDetails", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");
@@ -656,11 +652,9 @@ app.post("/getReceiptDetails", function (req, res) {
   });
 });
 
-app.post("/createNewOrder", function (req, res) {
+app.post("/createNewOrder", checkAuth, function (req, res) {
   kafka.make_request("newOrder", req.body, function (err, results) {
     console.log("in result");
-    checkAuth;
-
     console.log(results);
     if (err) {
       console.log("Inside err");

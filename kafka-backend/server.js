@@ -39,7 +39,7 @@ var TypeaheadList = require("./services/restaurant/getTypeaheadList");
 var options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  maxPoolSize: 500,
+  //maxPoolSize: 500,
   wtimeoutMS: 2500,
 };
 
