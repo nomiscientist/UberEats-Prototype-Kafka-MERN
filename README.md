@@ -1,4 +1,4 @@
-# **WEB APPLICATION : UberEats prototype uisng MERN Stack & Kafka**
+# **WEB APPLICATION : UberEats prototype using MERN Stack & Kafka Messaging**
 
 ## **CMPE273 Project : UberEats-Lab-2**
 
