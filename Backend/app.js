@@ -19,8 +19,8 @@ const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
 
 const s3 = new AWS.S3({
-  accessKeyId: "AKIAZJZS76WTOJJJGHU3",
-  secretAccessKey: "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",
+  accessKeyId: "",
+  secretAccessKey: "",
 });
 
 app.use(express.json());
