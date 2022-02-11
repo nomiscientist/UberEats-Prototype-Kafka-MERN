@@ -25,11 +25,17 @@ All the above main functionalities were incorporated by builiding a functional, 
 
 ### System Architecture Design:
 
-<img src="https://github.com/Archita22ind/CMPE273-UberEats-Lab-1/blob/main/glimpseofapp.png" width=50% height=50%>
+<img src="https://github.com/Archita22ind/UberEats-Prototype-Kafka-MERN/blob/main/images/systemarch.png" >
 
 ### Few screen captures of the application:
 
-<img src="https://github.com/Archita22ind/CMPE273-UberEats-Lab-1/blob/main/glimpseofapp.png" width=50% height=50%>
+<img src="https://github.com/Archita22ind/UberEats-Prototype-Kafka-MERN/blob/main/images/loginPage.png" >
+
+<img src="https://github.com/Archita22ind/UberEats-Prototype-Kafka-MERN/blob/main/images/glimpseofapp.png" >
+
+<img src="https://github.com/Archita22ind/UberEats-Prototype-Kafka-MERN/blob/main/images/glimpse1.png" >
+
+<img src="https://github.com/Archita22ind/UberEats-Prototype-Kafka-MERN/blob/main/images/orderstatus.png" >
 
 ## Getting Started with the Github repository-
 
